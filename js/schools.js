@@ -102,7 +102,7 @@
       : `verso <b>${escapeHtml(headsign || stopDisplayName(toId))}</b>`;
     return `
       <div class="school-run" data-route="${routeId}">
-        <div class="school-run-time">${fmtTime(time + ":00")}</div>
+        <div class="school-run-time">${App.modeIcon("autobus")}${fmtTime(time + ":00")}</div>
         <div class="school-run-body">${routeChip(routeId)} ${where}</div>
         <div class="school-run-days">${daysText(days)}</div>
       </div>`;

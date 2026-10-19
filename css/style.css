@@ -593,3 +593,19 @@ select#stop-filter {
 .delay-legend { display: flex; justify-content: space-between; font-size: 0.66rem; color: var(--text-muted); margin: 4px 0; }
 .delay-done { margin-top: 10px; }
 .delay-done summary { cursor: pointer; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+
+/* ---------- mode icons (bus / train) ---------- */
+.mode-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
+  vertical-align: -2px;
+  flex: none;
+}
+.mode-icon svg { width: 100%; height: 100%; }
+.mode-autobus { color: var(--bus-color); }
+.mode-treno { color: var(--treno-color); }
+.chip .mode-icon { margin-right: 3px; }
+.school-run { grid-template-columns: 64px 1fr auto; }
+.chip.active .mode-icon { color: #fff; }

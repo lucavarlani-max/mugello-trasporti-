@@ -122,6 +122,24 @@
     return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
   }
 
+  const MODE_ICONS = {
+    autobus: {
+      label: "Autobus",
+      path: "M4 1.5h8A1.5 1.5 0 0 1 13.5 3v8.5H12V13a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1.5H6V13a.5.5 0 0 1-.5.5h-1A.5.5 0 0 1 4 13v-1.5H2.5V3A1.5 1.5 0 0 1 4 1.5ZM4 3.25v3h8v-3H4ZM5 8.25a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z",
+    },
+    treno: {
+      label: "Treno",
+      path: "M4.5 1.5h7a2 2 0 0 1 2 2v6.25a2.25 2.25 0 0 1-1.6 2.15L13 14h-1.3l-.8-1.5H5.1L4.3 14H3l1.1-2.1a2.25 2.25 0 0 1-1.6-2.15V3.5a2 2 0 0 1 2-2ZM4 3.5v3h8v-3H4ZM5.25 8a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm5.5 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z",
+    },
+  };
+
+  function modeIcon(mode) {
+    const m = MODE_ICONS[mode];
+    if (!m) return "";
+    return `<span class="mode-icon mode-${mode}" title="${m.label}" role="img" aria-label="${m.label}">` +
+      `<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="${m.path}"/></svg></span>`;
+  }
+
   // ---------- Data loading ----------
 
   const readyCallbacks = [];
@@ -485,7 +503,7 @@
             <div class="trip-row">
               <div class="trip-row-head" data-trip-id="${t.trip_id}">
                 <div>
-                  <span class="trip-time">${fmtTime(mainTime)}</span>
+                  <span class="trip-time">${modeIcon(route.mode)}${fmtTime(mainTime)}</span>
                   <div class="trip-headsign">${t.headsign || (stopDisplayName(depStop[0]) + " → " + stopDisplayName(arrStop[0]))}</div>
                 </div>
                 <span class="trip-daytype">${t.day_type}</span>
@@ -550,7 +568,19 @@
     originId: null,
     destId: null,
     dayFilter: "__any__", // __any__ | feriale | sabato | festivo
+    modeFilter: "all",    // all | bus | treno | mixed (bus + treno nello stesso viaggio)
+    hasSearched: false,
   };
+
+  function modeFilterMatches(opt) {
+    const modes = new Set(opt.legs.map(l => routeOfSafe(l.routeId).mode));
+    switch (plannerState.modeFilter) {
+      case "bus": return modes.size === 1 && modes.has("autobus");
+      case "treno": return modes.size === 1 && modes.has("treno");
+      case "mixed": return modes.size === 2;
+      default: return true;
+    }
+  }
 
   const WEEKDAY_ABBR = { Lun: 0, Mar: 1, Mer: 2, Gio: 3, Ven: 4, Sab: 5, Dom: 6 };
 
@@ -605,6 +635,14 @@
         <button class="chip" data-day="festivo">Domenica e festivi</button>
       </div>
 
+      <div class="panel-section-label" style="margin-top:6px;">Mezzi</div>
+      <div class="daytype-chips" id="planner-mode-chips">
+        <button class="chip active" data-mode-filter="all">Tutti</button>
+        <button class="chip" data-mode-filter="bus">${modeIcon("autobus")}Solo bus</button>
+        <button class="chip" data-mode-filter="treno">${modeIcon("treno")}Solo treno</button>
+        <button class="chip" data-mode-filter="mixed">${modeIcon("autobus")}${modeIcon("treno")}Bus + treno</button>
+      </div>
+
       <button class="planner-search-btn" id="planner-search-btn" disabled>Cerca percorso</button>
       <div class="planner-note">
         Calcola le combinazioni dirette e con un cambio tra le fermate di treno e autobus della zona,
@@ -635,6 +673,16 @@
         plannerEl.querySelectorAll("#planner-day-chips .chip").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         plannerState.dayFilter = btn.dataset.day;
+        if (plannerState.hasSearched) runPlannerSearch();
+      });
+    });
+
+    plannerEl.querySelectorAll("#planner-mode-chips [data-mode-filter]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        plannerEl.querySelectorAll("#planner-mode-chips .chip").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        plannerState.modeFilter = btn.dataset.modeFilter;
+        if (plannerState.hasSearched) runPlannerSearch();
       });
     });
 
@@ -691,6 +739,7 @@
 
   async function runPlannerSearch() {
     const resultsEl = document.getElementById("planner-results");
+    plannerState.hasSearched = true;
     resultsEl.innerHTML = `<div class="empty-note">Ricerca combinazioni…</div>`;
     const origin = state.stops[plannerState.originId];
     const dest = state.stops[plannerState.destId];
@@ -929,7 +978,7 @@
       const key = opt.legs.map(l => `${l.routeId}#${l.tripId}`).join("|");
       if (seenRuns.has(key)) return false;
       seenRuns.add(key);
-      return true;
+      return modeFilterMatches(opt);
     });
 
     // Some rural lines split an otherwise identical run into one trip per weekday. Merge
@@ -954,7 +1003,8 @@
   function renderPlannerResults(options, totalCount) {
     const resultsEl = document.getElementById("planner-results");
     if (!options.length) {
-      resultsEl.innerHTML = `<div class="empty-note">Nessuna combinazione trovata con questi filtri. Prova a cambiare il giorno o le fermate scelte.</div>`;
+      const hint = plannerState.modeFilter === "all" ? "il giorno o le fermate scelte" : "il giorno, i mezzi o le fermate scelte";
+      resultsEl.innerHTML = `<div class="empty-note">Nessuna combinazione trovata con questi filtri. Prova a cambiare ${hint}.</div>`;
       return;
     }
     const originName = stopDisplayName(plannerState.originId);
@@ -983,7 +1033,7 @@
           <div class="journey-result-head" data-idx="${idx}">
             <div class="journey-top-row">
               <span class="journey-duration">${fmtDuration(opt.duration)}</span>
-              <span class="journey-times">${fmtTime(dep)} &rarr; ${fmtTime(arr)}</span>
+              <span class="journey-times">${opt.legs.map(l => modeIcon(routeOfSafe(l.routeId).mode)).join("")}${fmtTime(dep)} &rarr; ${fmtTime(arr)}</span>
             </div>
             <div class="journey-legs">${legsChips}<span class="journey-changes">${changesLabel}</span></div>
             <div class="journey-changes" style="margin-top:2px;">${opt.dayLabel}</div>
@@ -991,7 +1041,7 @@
           <div class="journey-detail" id="journey-detail-${idx}">
             ${opt.legs.map((l, i) => `
               <div class="journey-leg-block" style="border-color:${routeOfSafe(l.routeId).color}">
-                <div class="journey-leg-title">${routeOfSafe(l.routeId).short_name} &middot; ${routeOfSafe(l.routeId).long_name}</div>
+                <div class="journey-leg-title">${modeIcon(routeOfSafe(l.routeId).mode)}${routeOfSafe(l.routeId).short_name} &middot; ${routeOfSafe(l.routeId).long_name}</div>
                 <div>${stopDisplayName(l.fromStop)} (${fmtTime(l.depTime)}) &rarr; ${stopDisplayName(l.toStop)} (${fmtTime(l.arrTime)})</div>
               </div>
               ${i < opt.legs.length - 1 ? renderWaitNote(opt, l) : ""}
@@ -1089,7 +1139,7 @@
 
   window.MugelloApp = {
     map, state,
-    escapeHtml, fmtDate, stopDisplayName, fmtTime, timeToMinutes, haversineMeters,
+    escapeHtml, fmtDate, modeIcon, stopDisplayName, fmtTime, timeToMinutes, haversineMeters,
     highlightRoutes, fitRoutesBounds, selectRoute, fetchTimetable,
     registerFeature(name, hooks) { features[name] = hooks; },
     onReady(fn) { if (isReady) fn(); else readyCallbacks.push(fn); },

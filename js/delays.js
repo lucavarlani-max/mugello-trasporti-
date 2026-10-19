@@ -133,7 +133,7 @@
             ${badgeHtml(train.delay, train.canceled)}
           </div>
           <div class="journey-times">${escapeHtml(train.origin)} &rarr; ${escapeHtml(train.destination)}</div>
-          <div class="journey-changes">${hhmm(train.firstT)} &rarr; ${hhmm(train.lastT)}${status ? " &middot; " + status : ""}</div>
+          <div class="journey-changes">${App.modeIcon("treno")}${hhmm(train.firstT)} &rarr; ${hhmm(train.lastT)}${status ? " &middot; " + status : ""}</div>
         </div>
         <div class="journey-detail${open ? " open" : ""}">
           <div class="delay-legend"><span>Fermata</span><span>programmato &rarr; previsto</span></div>${rows}
@@ -153,7 +153,7 @@
       <div class="journey-result">
         <div class="journey-result-head">
           <div class="journey-top-row">
-            <span class="journey-duration">${hhmm(predicted)}</span>
+            <span class="journey-duration">${App.modeIcon("treno")}${hhmm(predicted)}</span>
             ${badgeHtml(d, train.canceled)}
           </div>
           <div class="journey-times">${escapeHtml(lineName(train))} ${train.number} &rarr; ${escapeHtml(train.destination)}</div>
