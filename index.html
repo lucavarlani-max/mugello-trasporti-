@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mugello in Movimento — Treni e Autobus del Mugello, Alto Mugello e Val di Sieve</title>
+<meta name="description" content="Mappa interattiva e orari di treni e autobus per Mugello, Alto Mugello e Val di Sieve: collegamenti locali e con Firenze e Faenza.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand">
+    <span class="brand-title">Mugello in Movimento</span>
+    <span class="brand-sub">Treni e autobus &middot; Mugello, Alto Mugello, Val di Sieve</span>
+  </div>
+  <div class="search-wrap">
+    <input id="search-input" type="text" placeholder="Cerca una fermata o un comune (es. Vicchio, Marradi, Pontassieve...)" autocomplete="off">
+    <div id="search-results" class="search-results hidden"></div>
+  </div>
+  <button id="menu-toggle" class="menu-toggle" aria-label="Apri elenco linee">&#9776; Linee</button>
+</header>
+
+<div id="app">
+  <aside id="sidebar">
+    <div class="sidebar-tabs">
+      <button class="tab-btn active" data-mode="planner">Da / A</button>
+      <button class="tab-btn" data-mode="lines">Linee</button>
+      <button class="tab-btn" data-mode="schools">Scuole</button>
+      <button class="tab-btn" data-mode="delays">Ritardi</button>
+    </div>
+    <div id="planner" class="planner"></div>
+    <div id="lines-list" class="lines-list hidden"></div>
+    <div id="tab-schools" class="tab-pane hidden"></div>
+    <div id="tab-delays" class="tab-pane hidden"></div>
+    <div class="sidebar-footer">
+      <div id="validity" class="validity"></div>
+      Dati: Regione Toscana &mdash; Open Data TPL (CC-BY), feed Trenitalia e Autolinee Toscane.
+      Orari indicativi: verificare eventuali variazioni sui canali ufficiali.
+    </div>
+  </aside>
+
+  <main id="map"></main>
+
+  <section id="panel" class="hidden">
+    <button id="panel-close" aria-label="Chiudi">&times;</button>
+    <div id="panel-content"></div>
+  </section>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/schools.js"></script>
+<script src="js/delays.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+name: Pubblica sito e aggiorna orari
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "30 4 * * 1" # ogni lunedì, 04:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Scarica i feed GTFS e rigenera i dati
+        run: python tools/build_data.py --work "$RUNNER_TEMP/feeds"
+
+      - name: Controlla i dati generati
+        run: python tools/check_data.py
+
+      - name: Prepara il sito
+        run: |
+          mkdir _site
+          cp -r index.html css js data _site/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
