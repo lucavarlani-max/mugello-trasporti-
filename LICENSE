@@ -1,0 +1,25 @@
+Copyright (c) 2026 Luca Varlani. Tutti i diritti riservati. / All rights reserved.
+
+"Mugello in Movimento" (il codice sorgente, la grafica, la struttura, i testi e gli altri
+contenuti originali di questo repository e del sito pubblicato) e' di proprieta' esclusiva
+dell'autore, Luca Varlani.
+
+Non e' concessa alcuna licenza d'uso. Senza previa autorizzazione scritta dell'autore e' vietato
+copiare, modificare, ripubblicare, ospitare, distribuire o riutilizzare, in tutto o in parte,
+questo materiale, anche in forma derivata.
+
+The source code, design, structure, texts and other original content of this repository and of the
+published website are the exclusive property of the author, Luca Varlani. No licence is granted.
+Without the author's prior written permission, copying, modifying, republishing, hosting,
+distributing or reusing this material, in whole or in part, including in derivative form,
+is prohibited.
+
+Dati e componenti di terzi / Third-party data and components
+------------------------------------------------------------
+Quanto sopra NON si applica ai materiali di terzi, che restano soggetti alle rispettive licenze:
+- Orari e percorsi: Regione Toscana, Open Data TPL (Trenitalia e Autolinee Toscane), CC-BY.
+- Mappa: (c) OpenStreetMap contributors.
+- Ritardi dei treni: BusOne (proxy.busone.app), dati derivati da ViaggiaTreno, (c) Trenitalia S.p.A. /
+  Gruppo FS Italiane; uso non commerciale.
+- Previsioni meteo: Mugello Meteo & Clima, dello stesso autore.
+- Librerie: Leaflet e Leaflet.markercluster.

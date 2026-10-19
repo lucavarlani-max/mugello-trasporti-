@@ -369,6 +369,12 @@
   document.getElementById("menu-toggle").addEventListener("click", () => {
     sidebarEl.classList.toggle("open");
   });
+  document.getElementById("drawer-backdrop").addEventListener("click", () => sidebarEl.classList.remove("open"));
+
+  // Below 1000px the sidebar is a drawer and the details panel a bottom sheet over the map
+  const compactQuery = window.matchMedia("(max-width: 1000px)");
+  const isCompact = () => compactQuery.matches;
+  const closeDrawer = () => { if (isCompact()) sidebarEl.classList.remove("open"); };
 
   // ---------- Route selection & highlighting ----------
 
@@ -384,6 +390,7 @@
 
   function highlightRoutes(routeIds) {
     dimAllRoutes();
+    clearFocus();
     state.activeRouteIds = routeIds;
     routeIds.forEach(routeId => {
       const layers = state.routeLayers[routeId];
@@ -407,16 +414,48 @@
     });
     if (!allLayers.length) return;
     const group = L.featureGroup(allLayers);
-    map.fitBounds(group.getBounds().pad(0.1));
+    fitMapTo(group.getBounds().pad(0.1));
+  }
+
+  // The map is partly covered by the bottom sheet on compact screens: keep the target in the visible part.
+  function fitMapTo(bounds) {
+    map.invalidateSize({ pan: false }); // the side panel may have just changed the map width
+    const sheetHeight = isCompact() && !panelEl.classList.contains("hidden") ? panelEl.getBoundingClientRect().height : 0;
+    map.fitBounds(bounds, { paddingTopLeft: [24, 24], paddingBottomRight: [24, sheetHeight + 24], maxZoom: 16 });
+  }
+
+  function clearFocus() {
+    if (state.focusLayer) {
+      map.removeLayer(state.focusLayer);
+      state.focusLayer = null;
+    }
+  }
+
+  // Centre and zoom the map on the stretch covered by a trip or journey, marking its stops.
+  function focusStops(stopIds, color) {
+    clearFocus();
+    const stops = stopIds.map(id => state.stops[id]).filter(Boolean);
+    if (!stops.length) return;
+    const group = L.layerGroup();
+    stops.forEach((s, i) => {
+      const first = i === 0, last = i === stops.length - 1 && stops.length > 1;
+      L.circleMarker([s.lat, s.lon], {
+        radius: first || last ? 7 : 4, color: "#fff", weight: 2, fillOpacity: 1,
+        fillColor: first ? "#1c7c54" : last ? "#b23a48" : (color || "#d68c45"),
+      }).bindTooltip(s.name, { direction: "top" }).addTo(group);
+    });
+    group.addTo(map);
+    state.focusLayer = group;
+    fitMapTo(L.latLngBounds(stops.map(s => [s.lat, s.lon])).pad(0.15));
   }
 
   function selectRoute(routeId, opts) {
     opts = opts || {};
     state.activeRouteId = routeId;
     highlightRoute(routeId);
-    if (opts.fly !== false) fitRouteBounds(routeId);
     openSchedulePanel(routeId, opts.focusStop || null);
-    if (window.innerWidth <= 860) sidebarEl.classList.remove("open");
+    if (opts.fly !== false) fitRouteBounds(routeId);
+    closeDrawer();
   }
 
   // ---------- Schedule panel ----------
@@ -546,7 +585,14 @@
         sel.addEventListener("change", () => { uiState.stopFilter = sel.value; render(); });
         panelContentEl.querySelectorAll("[data-trip-id]").forEach(head => {
           head.addEventListener("click", () => {
-            document.getElementById(`stops-${head.dataset.tripId}`).classList.toggle("open");
+            const detail = document.getElementById(`stops-${head.dataset.tripId}`);
+            detail.classList.toggle("open");
+            if (detail.classList.contains("open")) {
+              const trip = trips.find(t => t.trip_id === head.dataset.tripId);
+              if (trip) focusStops(trip.stops.map(s => s[0]), route.color);
+            } else {
+              clearFocus();
+            }
           });
         });
       }
@@ -559,6 +605,7 @@
     panelEl.classList.add("hidden");
     state.activeRouteId = null;
     state.activeRouteIds = [];
+    clearFocus();
     dimAllRoutes();
   });
 
@@ -1054,13 +1101,28 @@
 
     resultsEl.querySelectorAll("[data-idx]").forEach(head => {
       head.addEventListener("click", () => {
-        document.getElementById(`journey-detail-${head.dataset.idx}`).classList.toggle("open");
+        const detail = document.getElementById(`journey-detail-${head.dataset.idx}`);
+        detail.classList.toggle("open");
+        if (!detail.classList.contains("open")) { clearFocus(); return; }
         const opt = options[head.dataset.idx];
-        const routeIds = Array.from(new Set(opt.legs.map(l => l.routeId)));
-        highlightRoutes(routeIds);
-        fitRoutesBounds(routeIds);
+        highlightRoutes(Array.from(new Set(opt.legs.map(l => l.routeId))));
+        focusStops(journeyStopIds(opt), routeOfSafe(opt.legs[0].routeId).color);
+        closeDrawer();
       });
     });
+  }
+
+  // Every stop of the journey, from boarding to alighting on each leg.
+  function journeyStopIds(opt) {
+    const ids = [];
+    opt.legs.forEach(l => {
+      const trip = ((state.timetableCache[l.routeId] || {}).trips || []).find(t => t.trip_id === l.tripId);
+      const stops = trip ? trip.stops.map(s => s[0]) : [];
+      const from = stops.indexOf(l.fromStop), to = stops.indexOf(l.toStop);
+      if (from !== -1 && to >= from) ids.push(...stops.slice(from, to + 1));
+      else ids.push(l.fromStop, l.toStop);
+    });
+    return ids;
   }
 
   function renderWaitNote(opt, alightLeg) {
@@ -1124,7 +1186,7 @@
         }
         searchResultsEl.classList.add("hidden");
         searchInput.value = stop.name;
-        if (window.innerWidth <= 860) sidebarEl.classList.remove("open");
+        closeDrawer();
       });
     });
   }
@@ -1140,7 +1202,7 @@
   window.MugelloApp = {
     map, state,
     escapeHtml, fmtDate, modeIcon, stopDisplayName, fmtTime, timeToMinutes, haversineMeters,
-    highlightRoutes, fitRoutesBounds, selectRoute, fetchTimetable,
+    highlightRoutes, fitRoutesBounds, focusStops, closeDrawer, selectRoute, fetchTimetable,
     registerFeature(name, hooks) { features[name] = hooks; },
     onReady(fn) { if (isReady) fn(); else readyCallbacks.push(fn); },
     openPanel(html) {

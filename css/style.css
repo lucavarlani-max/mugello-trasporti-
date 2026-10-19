@@ -22,6 +22,14 @@ html, body {
   color: var(--text);
   background: var(--bg);
 }
+@supports (height: 100dvh) {
+  html, body { height: 100dvh; }
+}
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
 #topbar {
   display: flex;
@@ -96,7 +104,8 @@ html, body {
 
 #app {
   display: flex;
-  height: calc(100% - 64px);
+  flex: 1;
+  min-height: 0;
   position: relative;
 }
 
@@ -491,28 +500,99 @@ select#stop-filter {
   border-top: 1px solid var(--border);
 }
 
-@media (max-width: 860px) {
+#topbar { flex: none; }
+.drawer-backdrop { display: none; }
+
+/* tablet and small laptops: narrower side columns */
+@media (max-width: 1200px) {
+  #sidebar { width: 270px; min-width: 270px; }
+  #panel { width: 330px; min-width: 330px; }
+}
+
+/* compact (phones, tablets): sidebar becomes a drawer, details panel a bottom sheet */
+@media (max-width: 1000px) {
+  #topbar { gap: 8px; padding: 0 10px; }
+  .search-wrap { min-width: 0; }
+  .brand { flex: none; }
+  .brand-sub { display: none; }
+  .menu-toggle { display: inline-flex; align-items: center; flex: none; }
+
   #sidebar {
     position: absolute;
-    z-index: 900;
+    z-index: 1200;
     top: 0;
     bottom: 0;
-    left: -320px;
-    transition: left 0.2s ease;
-    box-shadow: 4px 0 16px rgba(0,0,0,0.2);
+    left: 0;
+    width: min(88vw, 340px);
+    min-width: 0;
+    transform: translateX(-105%);
+    transition: transform 0.2s ease;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
   }
-  #sidebar.open { left: 0; }
-  .menu-toggle { display: inline-block; }
+  #sidebar.open { transform: none; }
+  .drawer-backdrop {
+    display: block;
+    position: absolute;
+    inset: 0;
+    z-index: 1150;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+  #sidebar.open + .drawer-backdrop { opacity: 1; pointer-events: auto; }
+
   #panel {
     position: absolute;
+    left: 0;
     right: 0;
-    top: 0;
     bottom: 0;
-    z-index: 950;
-    width: 88%;
+    top: auto;
+    z-index: 1100;
+    width: auto;
     min-width: 0;
+    height: 52%;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    border-radius: 14px 14px 0 0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.18);
+    padding: 18px 14px calc(14px + env(safe-area-inset-bottom));
   }
-  .brand-sub { display: none; }
+  #panel::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 40px;
+    height: 4px;
+    margin-left: -20px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+  #panel-close { top: 8px; right: 12px; font-size: 1.7rem; padding: 4px 8px; }
+
+  /* 16px fields: stops iOS from zooming the page when a field is focused */
+  #topbar input, #sidebar input, #sidebar select { font-size: 16px; }
+  .sidebar-footer { padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+}
+
+/* phones: brand and menu on the first row, search on its own row */
+@media (max-width: 560px) {
+  #topbar { height: auto; flex-wrap: wrap; padding: 8px 10px; row-gap: 8px; }
+  .brand { flex: 1; }
+  .brand-title { font-size: 1rem; }
+  .menu-toggle { order: 2; }
+  .search-wrap { order: 3; flex: 1 1 100%; max-width: none; }
+  .journey-top-row, .delay-head { flex-wrap: wrap; }
+}
+
+/* touch screens: larger tap targets */
+@media (pointer: coarse) {
+  .chip { padding: 8px 12px; min-height: 36px; display: inline-flex; align-items: center; }
+  .tab-btn { padding: 13px 4px; }
+  .variant-btn, .planner-ac-item, .search-result-item, .school-item { padding-top: 11px; padding-bottom: 11px; }
+  .journey-result-head, .trip-row-head, .line-group-header { min-height: 44px; }
+  .menu-toggle { padding: 10px 14px; }
 }
 
 /* ---------- sidebar footer / validity ---------- */
@@ -609,3 +689,48 @@ select#stop-filter {
 .chip .mode-icon { margin-right: 3px; }
 .school-run { grid-template-columns: 64px 1fr auto; }
 .chip.active .mode-icon { color: #fff; }
+
+/* ---------- weather widget ---------- */
+.meteo-widget {
+  padding: 8px 12px;
+  border-top: 1px solid var(--border);
+  background: #f7f9fb;
+  font-size: 0.78rem;
+}
+.meteo-widget.hidden { display: none; }
+.meteo-row { display: flex; align-items: center; gap: 8px; }
+.meteo-svg { flex: none; }
+.meteo-main { flex: 1; min-width: 0; }
+.meteo-temp { font-size: 1.15rem; font-weight: 700; line-height: 1.1; }
+.meteo-desc { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.meteo-select {
+  max-width: 128px;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  background: #fff;
+}
+.meteo-today { margin-top: 4px; font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; gap: 8px; }
+.meteo-toggle { background: none; border: none; color: var(--navy-2); font-size: 0.72rem; cursor: pointer; text-decoration: underline; padding: 0; white-space: nowrap; }
+.meteo-days { margin-top: 6px; border-top: 1px dashed var(--border); padding-top: 4px; }
+.meteo-day { display: grid; grid-template-columns: 52px 22px 1fr auto; gap: 6px; align-items: center; padding: 2px 0; font-size: 0.72rem; }
+.meteo-when { text-transform: capitalize; }
+.meteo-rain { color: #1b6fa8; font-size: 0.68rem; }
+.meteo-credit { margin-top: 4px; font-size: 0.64rem; color: var(--text-muted); }
+.meteo-widget { max-height: 45vh; overflow-y: auto; }
+
+/* ---------- responsive overrides (kept last so they win over the base rules above) ---------- */
+@media (max-width: 1000px) {
+  .meteo-widget { max-height: 35vh; }
+}
+@media (max-width: 560px) {
+  .school-run { grid-template-columns: 64px 1fr; }
+  .school-run-days { grid-column: 2; text-align: left; max-width: none; }
+}
+
+/* ---------- ownership notice and visit counter ---------- */
+.copyright { margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--border); font-size: 0.62rem; line-height: 1.45; }
+.copyright b { color: var(--navy-2); }
+.visit-counter { margin-top: 4px; font-size: 0.68rem; font-weight: 600; color: var(--navy-2); }
+.visit-counter.hidden { display: none; }

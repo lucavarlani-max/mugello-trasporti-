@@ -89,9 +89,10 @@
     dayFilter = todayWeekday();
     if (marker) map.removeLayer(marker);
     marker = L.circleMarker([school.lat, school.lon], { radius: 16, color: "#d68c45", weight: 3, fillOpacity: 0.15 }).addTo(map);
-    map.flyTo([school.lat, school.lon], 16);
     renderList();
     renderPanel();
+    App.closeDrawer();
+    App.focusStops([school.stop_ids[0]]);
   }
 
   function runRow(t, kind) {
@@ -101,7 +102,7 @@
       ? `da <b>${escapeHtml(stopDisplayName(fromId))}</b>`
       : `verso <b>${escapeHtml(headsign || stopDisplayName(toId))}</b>`;
     return `
-      <div class="school-run" data-route="${routeId}">
+      <div class="school-run" data-route="${routeId}" data-kind="${kind}" data-from="${fromId}" data-to="${toId}">
         <div class="school-run-time">${App.modeIcon("autobus")}${fmtTime(time + ":00")}</div>
         <div class="school-run-body">${routeChip(routeId)} ${where}</div>
         <div class="school-run-days">${daysText(days)}</div>
@@ -149,7 +150,9 @@
     root.querySelectorAll("[data-route]").forEach(row => {
       row.addEventListener("click", () => {
         App.highlightRoutes([row.dataset.route]);
-        App.fitRoutesBounds([row.dataset.route]);
+        const school = s.stop_ids[0];
+        const route = state.routesById[row.dataset.route];
+        App.focusStops(row.dataset.kind === "arrival" ? [row.dataset.from, school] : [school, row.dataset.to], route && route.color);
       });
     });
   }
