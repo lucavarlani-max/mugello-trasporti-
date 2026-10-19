@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Anteprima social</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #fff;
+    background: radial-gradient(120% 140% at 85% 20%, #2f5379 0%, #24405c 38%, #1b2a3c 100%);
+    position: relative;
+  }
+  svg.map { position: absolute; inset: 0; }
+  .content { position: absolute; left: 84px; top: 48px; width: 760px; display: flex; flex-direction: column; }
+  .badges { display: flex; gap: 14px; margin-bottom: 22px; }
+  .badge { width: 64px; height: 64px; border-radius: 18px; display: flex; align-items: center; justify-content: center; background: #fff; }
+  .badge svg { width: 38px; height: 38px; }
+  h1 { font-size: 78px; line-height: 1.02; font-weight: 800; letter-spacing: -1.5px; }
+  .sub { margin-top: 16px; font-size: 32px; line-height: 1.25; color: #d7e1ec; }
+  .chips { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .chip { padding: 8px 20px; border-radius: 999px; font-size: 24px; font-weight: 600; background: rgba(255,255,255,0.14); border: 2px solid rgba(255,255,255,0.28); }
+  .domain { position: absolute; left: 84px; bottom: 36px; font-size: 28px; font-weight: 600; color: #f0c48f; letter-spacing: 0.3px; }
+</style>
+</head>
+<body>
+  <svg class="map" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <g fill="none" stroke="#ffffff" stroke-opacity="0.07" stroke-width="2">
+      <path d="M560 640C620 540 720 560 790 480S960 380 1060 300 1180 150 1230 80"/>
+      <path d="M520 640C600 560 700 590 760 520S940 420 1040 350 1160 210 1230 150"/>
+      <path d="M600 640C650 520 760 530 830 450S980 340 1080 250 1190 90 1230 20"/>
+      <path d="M480 640C560 600 660 620 730 560S900 470 1000 410 1140 280 1230 220"/>
+    </g>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="9">
+      <path d="M1236 118C1150 150 1090 230 1010 262S860 310 800 392 700 520 640 646" stroke="#b23a48"/>
+      <path d="M1236 300C1160 296 1110 350 1040 372S900 380 860 440 800 560 770 646" stroke="#1b6fa8"/>
+      <path d="M1100 -10C1090 80 1040 120 990 170S930 280 880 322" stroke="#d68c45"/>
+      <path d="M1236 470C1170 440 1120 470 1060 456S960 430 910 470" stroke="#1c7c54"/>
+    </g>
+    <g stroke="#1b2a3c" stroke-width="4">
+      <circle cx="1010" cy="262" r="12" fill="#fff"/>
+      <circle cx="800" cy="392" r="12" fill="#fff"/>
+      <circle cx="1040" cy="372" r="11" fill="#fff"/>
+      <circle cx="860" cy="440" r="11" fill="#fff"/>
+      <circle cx="990" cy="170" r="11" fill="#fff"/>
+      <circle cx="1060" cy="456" r="10" fill="#fff"/>
+      <circle cx="1150" cy="150" r="10" fill="#fff"/>
+      <circle cx="700" cy="520" r="10" fill="#fff"/>
+    </g>
+  </svg>
+
+  <div class="content">
+    <div class="badges">
+      <div class="badge" style="color:#1b6fa8"><svg viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M4 1.5h8A1.5 1.5 0 0 1 13.5 3v8.5H12V13a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1.5H6V13a.5.5 0 0 1-.5.5h-1A.5.5 0 0 1 4 13v-1.5H2.5V3A1.5 1.5 0 0 1 4 1.5ZM4 3.25v3h8v-3H4ZM5 8.25a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm6 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg></div>
+      <div class="badge" style="color:#b23a48"><svg viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M4.5 1.5h7a2 2 0 0 1 2 2v6.25a2.25 2.25 0 0 1-1.6 2.15L13 14h-1.3l-.8-1.5H5.1L4.3 14H3l1.1-2.1a2.25 2.25 0 0 1-1.6-2.15V3.5a2 2 0 0 1 2-2ZM4 3.5v3h8v-3H4ZM5.25 8a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm5.5 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg></div>
+    </div>
+    <h1>Mugello in Movimento</h1>
+    <div class="sub">Treni e autobus del Mugello,<br>Alto Mugello e Val di Sieve</div>
+    <div class="chips">
+      <span class="chip">Mappa interattiva</span>
+      <span class="chip">Orari</span>
+      <span class="chip">Percorsi</span>
+      <span class="chip">Ritardi treni</span>
+    </div>
+  </div>
+  <div class="domain">www.mugellotrasporti.it</div>
+</body>
+</html>
