@@ -191,6 +191,37 @@ body {
   border: 1px solid var(--border);
   font-size: 0.85rem;
 }
+.planner-input-row { display: flex; gap: 6px; }
+.planner-input-row input { flex: 1; min-width: 0; }
+.planner-locate {
+  flex: none;
+  width: 38px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--navy-2);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.planner-locate:hover { background: #eef3f8; }
+.planner-hint { min-height: 1em; margin: -2px 0 4px; font-size: 0.72rem; color: var(--text-muted); }
+.planner-ac-locate { color: var(--navy-2); font-weight: 600; }
+.planner-ac-note { color: var(--text-muted); cursor: default; }
+.planner-ac-note:hover { background: transparent; }
+.pt-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  display: grid;
+  place-items: center;
+}
+.pt-pin span { transform: rotate(45deg); color: #fff; font: 700 12px/1 system-ui, sans-serif; }
+.pt-origin { background: #1c7c54; }
+.pt-dest { background: #b23a48; }
 .planner-swap {
   display: block;
   margin: -2px auto 8px;
@@ -874,3 +905,18 @@ button, a, select, input, .chip { touch-action: manipulation; }
   }
   #panel::before { display: none; }
 }
+
+/* map: button shown while a single journey is displayed */
+.map-show-all {
+  background: #fff;
+  color: var(--navy-2);
+  border: 2px solid rgba(0,0,0,0.25);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+.map-show-all:hover { background: #eef3f8; }

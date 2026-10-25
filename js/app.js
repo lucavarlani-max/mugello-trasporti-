@@ -263,6 +263,7 @@
     const previous = state.mode;
     if (previous !== name && features[previous] && features[previous].onHide) features[previous].onHide();
     state.mode = name;
+    if (name !== "planner" && state.networkHidden) clearFocus();
     plannerEl.classList.toggle("hidden", name !== "planner");
     linesListEl.classList.toggle("hidden", name !== "lines");
     schoolsPaneEl.classList.toggle("hidden", name !== "schools");
@@ -452,6 +453,112 @@
       map.removeLayer(state.focusLayer);
       state.focusLayer = null;
     }
+    showNetwork();
+  }
+
+  // While a journey is shown the rest of the network (lines and stops) is taken off the map.
+  function hideNetwork() {
+    if (state.networkHidden) return;
+    state.networkHidden = true;
+    if (state.clusterGroup) map.removeLayer(state.clusterGroup);
+    Object.values(state.routeLayers).forEach(layers => layers.forEach(l => map.removeLayer(l)));
+    if (!state.showAllControl) {
+      state.showAllControl = L.control({ position: "topright" });
+      state.showAllControl.onAdd = () => {
+        const btn = L.DomUtil.create("button", "map-show-all");
+        btn.type = "button";
+        btn.textContent = "Mostra tutte le linee";
+        L.DomEvent.disableClickPropagation(btn);
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".journey-detail.open").forEach(d => d.classList.remove("open"));
+          clearFocus();
+        });
+        return btn;
+      };
+    }
+    state.showAllControl.addTo(map);
+  }
+
+  function showNetwork() {
+    if (!state.networkHidden) return;
+    state.networkHidden = false;
+    Object.values(state.routeLayers).forEach(layers => layers.forEach(l => l.addTo(map)));
+    if (state.clusterGroup) map.addLayer(state.clusterGroup);
+    if (state.showAllControl) state.showAllControl.remove();
+  }
+
+  // The part of a line's shape between two of its stops (straight segments between the stops if
+  // the shape cannot be followed).
+  function legPath(leg) {
+    const route = state.routesById[leg.routeId] || {};
+    const trip = ((state.timetableCache[leg.routeId] || {}).trips || []).find(t => t.trip_id === leg.tripId);
+    const ids = trip ? trip.stops.map(s => s[0]) : [leg.fromStop, leg.toStop];
+    const a = ids.indexOf(leg.fromStop), b = ids.indexOf(leg.toStop);
+    const onLeg = a !== -1 && b >= a ? (trip ? trip.stops.slice(a, b + 1) : []) : [];
+    const A = state.stops[leg.fromStop], B = state.stops[leg.toStop];
+    const straight = (onLeg.length ? onLeg.map(s => state.stops[s[0]]).filter(Boolean) : [A, B].filter(Boolean)).map(s => [s.lat, s.lon]);
+    const shapes = route.shapes || {};
+    const shape = shapes[trip ? trip.direction_id : ""] || Object.values(shapes).sort((x, y) => y.length - x.length)[0];
+    if (!shape || shape.length < 2 || !A || !B) return { line: straight, onLeg };
+    const near = (p, from) => {
+      let best = -1, bd = Infinity;
+      for (let i = from; i < shape.length; i++) {
+        const d = (shape[i][0] - p.lat) ** 2 + ((shape[i][1] - p.lon) * 0.72) ** 2;
+        if (d < bd) { bd = d; best = i; }
+      }
+      return best;
+    };
+    const i = near(A, 0), j = i === -1 ? -1 : near(B, i);
+    if (i === -1 || j <= i || haversineMeters(shape[j][0], shape[j][1], B.lat, B.lon) > 300) return { line: straight, onLeg };
+    return { line: [[A.lat, A.lon], ...shape.slice(i, j + 1), [B.lat, B.lon]], onLeg };
+  }
+
+  // Show only one journey: the stretch of every line used, its stops, and the walks between them.
+  function showJourneyOnMap(opt) {
+    clearFocus();
+    hideNetwork();
+    const group = L.layerGroup();
+    const bounds = [];
+    const coord = id => {
+      if (id === "__origin__") id = plannerState.originId;
+      if (id === "__dest__") id = plannerState.destId;
+      const p = plannerState.points[id] || state.stops[id];
+      return p ? [p.lat, p.lon] : null;
+    };
+    const walk = (from, to) => {
+      const a = coord(from), b = coord(to);
+      if (!a || !b) return;
+      L.polyline([a, b], { color: "#555", weight: 3, opacity: 0.9, dashArray: "2 8", lineCap: "round" }).addTo(group);
+      bounds.push(a, b);
+    };
+    if (opt.initialWalk) walk(opt.initialWalk.from, opt.initialWalk.to);
+    opt.legs.forEach((leg, n) => {
+      const route = routeOfSafe(leg.routeId);
+      const { line, onLeg } = legPath(leg);
+      L.polyline(line, { color: "#fff", weight: 10, opacity: 0.9, lineCap: "round" }).addTo(group);
+      L.polyline(line, { color: route.color, weight: 6, opacity: 1, lineCap: "round" }).addTo(group);
+      bounds.push(...line);
+      const stops = onLeg.length ? onLeg : [[leg.fromStop, leg.arrTime, leg.depTime], [leg.toStop, leg.arrTime, leg.arrTime]];
+      stops.forEach((s, i) => {
+        const stop = state.stops[s[0]];
+        if (!stop) return;
+        const first = i === 0, last = i === stops.length - 1;
+        const time = first ? leg.depTime : (last ? leg.arrTime : s[2]);
+        L.circleMarker([stop.lat, stop.lon], {
+          radius: first || last ? 8 : 4, color: "#fff", weight: 2, fillOpacity: 1,
+          fillColor: first ? "#1c7c54" : last ? "#b23a48" : route.color,
+        }).bindTooltip(`${first ? "Sali: " : last ? "Scendi: " : ""}${stop.name} (${fmtTime(time)})`, { direction: "top", permanent: first || last }).addTo(group);
+      });
+      if (n < opt.legs.length - 1 && leg.toStop !== opt.legs[n + 1].fromStop) walk(leg.toStop, opt.legs[n + 1].fromStop);
+    });
+    if (opt.finalWalk) walk(opt.finalWalk.from, opt.finalWalk.to);
+    ["origin", "dest"].forEach(role => {
+      const p = plannerState.points[role === "origin" ? plannerState.originId : plannerState.destId];
+      if (p) bounds.push([p.lat, p.lon]);
+    });
+    group.addTo(map);
+    state.focusLayer = group;
+    if (bounds.length) fitMapTo(L.latLngBounds(bounds).pad(0.12));
   }
 
   // Centre and zoom the map on the stretch covered by a trip or journey, marking its stops.
@@ -640,6 +747,8 @@
     dayFilter: "__any__", // __any__ | feriale | sabato | festivo
     modeFilter: "all",    // all | bus | treno | mixed (bus + treno nello stesso viaggio)
     hasSearched: false,
+    points: {},    // id -> {lat, lon, name}: places picked as an address or as the current position
+    markers: {},   // role -> map pin of such a place
   };
 
   function modeFilterMatches(opt) {
@@ -684,15 +793,22 @@
     plannerEl.innerHTML = `
       <div class="planner-field">
         <label>Da dove parti</label>
-        <input type="text" id="planner-from" placeholder="Es. Vicchio, Borgo San Lorenzo..." autocomplete="off">
+        <div class="planner-input-row">
+          <input type="text" id="planner-from" placeholder="Fermata, via, località o comune" autocomplete="off">
+          <button type="button" class="planner-locate" id="planner-locate" title="Usa la mia posizione" aria-label="Usa la mia posizione">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
         <div class="planner-autocomplete hidden" id="planner-from-ac"></div>
       </div>
       <button class="planner-swap" id="planner-swap" title="Inverti partenza/arrivo">&#8645;</button>
       <div class="planner-field">
         <label>Dove vuoi andare</label>
-        <input type="text" id="planner-to" placeholder="Es. Firenze, Faenza..." autocomplete="off">
+        <input type="text" id="planner-to" placeholder="Fermata, via, località o comune" autocomplete="off">
         <div class="planner-autocomplete hidden" id="planner-to-ac"></div>
       </div>
+
+      <div class="planner-hint" id="planner-hint"></div>
 
       <div class="panel-section-label" style="margin-top:10px;">Giorno del viaggio</div>
       <div class="daytype-chips" id="planner-day-chips">
@@ -714,24 +830,24 @@
       <div class="planner-note">
         Calcola le combinazioni dirette e con uno o più cambi tra le fermate di treno e autobus della zona,
         ordinate per durata (include brevi cambi a piedi tra una fermata bus e una stazione vicine).
+        Puoi partire o arrivare anche da una via, una località, un comune o dalla tua posizione: il percorso comprende
+        la camminata fino alla fermata (stima in linea d'aria; senza numero civico si usa il centro della via, e il
+        segnaposto si può trascinare sul punto esatto). Le vie sono cercate con OpenStreetMap: il testo scritto viene
+        inviato a quel servizio, la posizione GPS no.
       </div>
       <div id="planner-results"></div>
     `;
 
-    setupPlannerAutocomplete("planner-from", "planner-from-ac", (stop) => {
-      plannerState.originId = stop.id;
-      checkPlannerReady();
-    });
-    setupPlannerAutocomplete("planner-to", "planner-to-ac", (stop) => {
-      plannerState.destId = stop.id;
-      checkPlannerReady();
-    });
+    setupPlannerAutocomplete("planner-from", "planner-from-ac", place => setPlannerPlace("origin", place), { locate: useMyPosition });
+    setupPlannerAutocomplete("planner-to", "planner-to-ac", place => setPlannerPlace("dest", place));
+    document.getElementById("planner-locate").addEventListener("click", useMyPosition);
 
     document.getElementById("planner-swap").addEventListener("click", () => {
       const fromInput = document.getElementById("planner-from");
       const toInput = document.getElementById("planner-to");
       const tmpVal = fromInput.value; fromInput.value = toInput.value; toInput.value = tmpVal;
       const tmpId = plannerState.originId; plannerState.originId = plannerState.destId; plannerState.destId = tmpId;
+      refreshPointMarkers();
       checkPlannerReady();
     });
 
@@ -762,42 +878,191 @@
     btn.disabled = !(plannerState.originId && plannerState.destId && plannerState.originId !== plannerState.destId);
   }
 
-  function setupPlannerAutocomplete(inputId, acId, onSelect) {
+  // ---------- Places: stops, addresses, current position ----------
+
+  // Address search: Photon (OpenStreetMap data), which is meant for suggestions while typing.
+  // Only the text typed in the field is sent, never the GPS position.
+  const PHOTON_URL = "https://photon.komoot.io/api/";
+  const GEO_BBOX = "10.9,43.7,12.0,44.4";            // Mugello, Val di Sieve, Firenze, Faenza
+  const GEO_BIAS = { lat: 43.97, lon: 11.38 };
+  const GEO_SKIP_KEYS = new Set(["waterway", "boundary", "natural", "landuse", "route", "aeroway"]);
+  const geoCache = new Map();
+
+  function describeAddress(p) {
+    const street = p.street ? p.street + (p.housenumber ? " " + p.housenumber : "") : "";
+    const town = p.city || p.town || p.village || p.county || "";
+    const place = [p.district && p.district !== town ? p.district : "", town].filter(Boolean).join(", ");
+    const name = p.name || street;
+    const detail = [p.name && street ? street : "", place].filter(Boolean).join(" · ");
+    return { name, detail };
+  }
+
+  async function searchAddresses(q, signal) {
+    const key = q.toLowerCase();
+    if (geoCache.has(key)) return geoCache.get(key);
+    // "loc. Cardetole, 38, Borgo San Lorenzo" -> "Cardetole 38 Borgo San Lorenzo", then without the number
+    const cleaned = q.replace(/\b(?:loc|loc\.|località|localita|frazione|fraz|fraz\.)\s+/gi, "").replace(/[,;]+/g, " ").replace(/\s+/g, " ").trim();
+    const variants = Array.from(new Set([cleaned, cleaned.replace(/\b\d+\s?[a-z]?\b/gi, "").replace(/\s+/g, " ").trim()])).filter(v => v.length >= 3);
+    let features = [];
+    for (const v of variants) {
+      const url = `${PHOTON_URL}?q=${encodeURIComponent(v)}&limit=8&bbox=${GEO_BBOX}&lat=${GEO_BIAS.lat}&lon=${GEO_BIAS.lon}`;
+      const res = await fetch(url, { signal });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      features = ((await res.json()).features || []).filter(f => !GEO_SKIP_KEYS.has((f.properties || {}).osm_key));
+      if (features.length) break;
+    }
+    const seen = new Set();
+    const list = [];
+    features.forEach(f => {
+      const p = f.properties || {};
+      if (GEO_SKIP_KEYS.has(p.osm_key) || !f.geometry || !f.geometry.coordinates) return;
+      const { name, detail } = describeAddress(p);
+      if (!name) return;
+      const [lon, lat] = f.geometry.coordinates;
+      const id = `${name}|${detail}`;
+      if (seen.has(id)) return;
+      seen.add(id);
+      list.push({ name: detail ? `${name}, ${detail.split(" · ").pop()}` : name, shortName: name, detail, lat, lon });
+    });
+    geoCache.set(key, list.slice(0, 5));
+    return geoCache.get(key);
+  }
+
+  function setupPlannerAutocomplete(inputId, acId, onSelect, opts = {}) {
     const input = document.getElementById(inputId);
     const ac = document.getElementById(acId);
-    let timer = null;
+    let timer = null, controller = null, token = 0;
+
+    function render(q, addresses, searching) {
+      const ql = q.toLowerCase();
+      const stops = q.length >= 2 ? Object.values(state.stops).filter(s => s.name.toLowerCase().includes(ql)).slice(0, 8) : [];
+      const rows = [];
+      if (opts.locate && q.length < 2) {
+        rows.push(`<div class="planner-ac-item planner-ac-locate" data-locate="1"><div>&#9673; La mia posizione</div><div class="sr-meta">Usa il GPS del dispositivo</div></div>`);
+      }
+      stops.forEach(s => rows.push(`
+        <div class="planner-ac-item" data-stop-id="${s.id}">
+          <div>${escapeHtml(s.name)}</div>
+          <div class="sr-meta">${s.modes.includes("treno") ? "Stazione" : "Fermata bus"}</div>
+        </div>`));
+      (addresses || []).forEach((a, i) => rows.push(`
+        <div class="planner-ac-item" data-address="${i}">
+          <div>${escapeHtml(a.shortName)}</div>
+          <div class="sr-meta">Indirizzo o località${a.detail ? " · " + escapeHtml(a.detail) : ""}</div>
+        </div>`));
+      if (searching) rows.push(`<div class="planner-ac-item planner-ac-note">Cerco vie e località…</div>`);
+      if (!rows.length) {
+        if (q.length < 2) { ac.classList.add("hidden"); ac.innerHTML = ""; return; }
+        rows.push(`<div class="planner-ac-item planner-ac-note">Nessun risultato</div>`);
+      }
+      ac.innerHTML = rows.join("");
+      ac.classList.remove("hidden");
+      ac.querySelectorAll("[data-stop-id]").forEach(el => el.addEventListener("click", () => {
+        const stop = state.stops[el.dataset.stopId];
+        input.value = stop.name;
+        ac.classList.add("hidden");
+        onSelect({ type: "stop", stop });
+      }));
+      ac.querySelectorAll("[data-address]").forEach(el => el.addEventListener("click", () => {
+        const a = addresses[Number(el.dataset.address)];
+        input.value = a.name;
+        ac.classList.add("hidden");
+        onSelect({ type: "point", point: { lat: a.lat, lon: a.lon, name: a.name } });
+      }));
+      ac.querySelectorAll("[data-locate]").forEach(el => el.addEventListener("click", () => {
+        ac.classList.add("hidden");
+        opts.locate();
+      }));
+    }
+
+    input.addEventListener("focus", () => { if (opts.locate && input.value.trim().length < 2) render("", [], false); });
     input.addEventListener("input", () => {
       clearTimeout(timer);
-      timer = setTimeout(() => {
-        const q = input.value.trim().toLowerCase();
-        if (q.length < 2) { ac.classList.add("hidden"); ac.innerHTML = ""; return; }
-        const matches = Object.values(state.stops).filter(s => s.name.toLowerCase().includes(q)).slice(0, 20);
-        if (!matches.length) {
-          ac.innerHTML = `<div class="planner-ac-item">Nessun risultato</div>`;
-          ac.classList.remove("hidden");
-          return;
+      if (controller) controller.abort();
+      const q = input.value.trim();
+      const mine = ++token;
+      render(q, [], q.length >= 3);
+      if (q.length < 3) return;
+      timer = setTimeout(async () => {
+        controller = new AbortController();
+        try {
+          const addresses = await searchAddresses(q, controller.signal);
+          if (mine === token) render(q, addresses, false);
+        } catch (err) {
+          if (mine === token && err.name !== "AbortError") render(q, [], false);   // offline: the stops still work
         }
-        ac.innerHTML = matches.map(s => `
-          <div class="planner-ac-item" data-stop-id="${s.id}">
-            <div>${s.name}</div>
-            <div class="sr-meta">${s.modes.includes("treno") ? "Stazione" : "Fermata bus"}</div>
-          </div>`).join("");
-        ac.classList.remove("hidden");
-        ac.querySelectorAll("[data-stop-id]").forEach(el => {
-          el.addEventListener("click", () => {
-            const stop = state.stops[el.dataset.stopId];
-            input.value = stop.name;
-            ac.classList.add("hidden");
-            onSelect(stop);
-          });
-        });
-      }, 120);
+      }, 400);
     });
     document.addEventListener("click", (e) => {
-      if (!e.target.closest(`#${inputId}`) && !e.target.closest(`#${acId}`)) {
+      if (!e.target.closest(`#${inputId}`) && !e.target.closest(`#${acId}`) && !e.target.closest(".planner-locate")) {
         ac.classList.add("hidden");
       }
     });
+  }
+
+  // A place picked as an address or position (not a stop) is a pin on the map, which can be dragged.
+  function placeName(id) {
+    if (id === "__origin__") return placeName(plannerState.originId);
+    if (id === "__dest__") return placeName(plannerState.destId);
+    const point = plannerState.points[id];
+    return point ? point.name : stopDisplayName(id);
+  }
+
+  function refreshPointMarkers() {
+    Object.values(plannerState.markers).forEach(m => map.removeLayer(m));
+    plannerState.markers = {};
+    [["origin", plannerState.originId, "Partenza", "Da"], ["dest", plannerState.destId, "Arrivo", "A"]].forEach(([role, id, title, letter]) => {
+      const point = plannerState.points[id];
+      if (!point) return;
+      const marker = L.marker([point.lat, point.lon], {
+        draggable: true, keyboard: false, title: `${title}: ${point.name}`,
+        icon: L.divIcon({ className: "", html: `<div class="pt-pin pt-${role}"><span>${letter}</span></div>`, iconSize: [30, 38], iconAnchor: [15, 36] }),
+      }).addTo(map);
+      marker.on("dragend", () => {
+        const pos = marker.getLatLng();
+        point.lat = pos.lat; point.lon = pos.lng;
+        point.name = point.name.replace(/ \(spostato\)$/, "") + " (spostato)";
+        const input = document.getElementById(role === "origin" ? "planner-from" : "planner-to");
+        if (input) input.value = point.name;
+        if (plannerState.hasSearched) runPlannerSearch();
+      });
+      plannerState.markers[role] = marker;
+    });
+  }
+
+  function setPlannerPlace(role, place) {
+    const key = role === "origin" ? "originId" : "destId";
+    const old = plannerState[key];
+    if (old && plannerState.points[old]) delete plannerState.points[old];
+    if (place.type === "stop") {
+      plannerState[key] = place.stop.id;
+    } else {
+      const id = `pt:${role}:${Date.now()}`;
+      plannerState.points[id] = { ...place.point };
+      plannerState[key] = id;
+    }
+    refreshPointMarkers();
+    const point = plannerState.points[plannerState[key]];
+    if (point) map.setView([point.lat, point.lon], Math.max(map.getZoom(), 14));
+    checkPlannerReady();
+  }
+
+  function useMyPosition() {
+    const hint = document.getElementById("planner-hint");
+    const input = document.getElementById("planner-from");
+    const say = text => { if (hint) hint.textContent = text; };
+    if (!navigator.geolocation) { say("Questo dispositivo non fornisce la posizione."); return; }
+    say("Cerco la tua posizione…");
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude, accuracy } = pos.coords;
+      setPlannerPlace("origin", { type: "point", point: { lat: latitude, lon: longitude, name: "La mia posizione" } });
+      if (input) input.value = "La mia posizione";
+      say(`Posizione trovata (precisione circa ${Math.round(accuracy)} m). Il segnaposto si può trascinare.`);
+    }, err => {
+      say(err.code === 1 ? "Permesso negato: abilita la posizione per questo sito nelle impostazioni del browser."
+        : err.code === 3 ? "Posizione non trovata in tempo, riprova."
+        : "Posizione non disponibile su questo dispositivo.");
+    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 });
   }
 
   function ensureTimetablesLoaded(routeIds) {
@@ -807,7 +1072,11 @@
   async function runPlannerSearch() {
     const resultsEl = document.getElementById("planner-results");
     plannerState.hasSearched = true;
+    clearFocus();
     resultsEl.innerHTML = `<div class="empty-note">Ricerca combinazioni…</div>`;
+    const originPoint = plannerState.points[plannerState.originId];
+    const destPoint = plannerState.points[plannerState.destId];
+    if (originPoint || destPoint) return runPointSearch(resultsEl, originPoint, destPoint);
     const origin = state.stops[plannerState.originId];
     const dest = state.stops[plannerState.destId];
     if (!origin || !dest) return;
@@ -1042,12 +1311,42 @@
     if (options.length < 8) {
       try {
         resultsEl.innerHTML = `<div class="empty-note">Ricerca di percorsi con più cambi…</div>`;
-        options.push(...await multiLegSearch(originCluster, destCluster));
+        const asMap = cluster => new Map(Array.from(cluster, s => [s, 0]));
+        options.push(...await multiLegSearch(asMap(originCluster), asMap(destCluster), false));
       } catch (err) {
         console.error("multi-leg search failed", err);
       }
     }
 
+    return finalizeJourneys(options);
+  }
+
+  // From or to an address: walk to the nearest stops, then the round-based search does the rest.
+  async function runPointSearch(resultsEl, originPoint, destPoint) {
+    const side = (point, id) => {
+      if (point) return stopsNearPoint(point.lat, point.lon);
+      const stop = state.stops[id];
+      const cluster = state.stopClusters[id] || new Set(stop ? [id] : []);
+      return new Map(Array.from(cluster, s => [s, 0]));
+    };
+    const origins = side(originPoint, plannerState.originId);
+    const dests = side(destPoint, plannerState.destId);
+    if (!origins.size || !dests.size) {
+      const which = !origins.size ? placeName(plannerState.originId) : placeName(plannerState.destId);
+      resultsEl.innerHTML = `<div class="empty-note">Nessuna fermata entro 1,5 km da &laquo;${escapeHtml(which)}&raquo;. Prova un luogo più vicino alla zona servita.</div>`;
+      return;
+    }
+    resultsEl.innerHTML = `<div class="empty-note">Ricerca percorsi…</div>`;
+    let options = [];
+    try {
+      options = await multiLegSearch(origins, dests, true);
+    } catch (err) {
+      console.error("address search failed", err);
+    }
+    finalizeJourneys(options);
+  }
+
+  function finalizeJourneys(options) {
     // De-duplicate: the same pair of physical runs can be found through several shared
     // stops along an overlapping stretch of two routes — keep just one row for each.
     const seenRuns = new Set();
@@ -1087,15 +1386,21 @@
     renderPlannerResults(mergedOptions.slice(0, 40), mergedOptions.length);
   }
 
-  // ---------- Journeys with several changes ----------
+  // ---------- Journeys with several changes, or starting/ending away from a stop ----------
   // Round-based earliest-arrival search (RAPTOR): round k finds the best way to reach every stop
-  // with k vehicles. It covers what the direct/one-change search above cannot, such as two
-  // different runs of the same line joined at an intermediate stop, or three or more legs.
+  // with k vehicles. It covers what the direct/one-change search above cannot: two different runs
+  // of the same line joined at an intermediate stop, three or more legs, and journeys that begin
+  // or end at an address (walking to or from the nearest stops).
 
   const MAX_LEGS = 4;
-  const MAX_FIRST_WAIT = 5;   // the first run must leave right at the chosen departure time
+  const MAX_FIRST_WAIT = 5;   // the first run must leave right after the chosen departure time
+  const MAX_WAIT_TRANSFER = 90;
   const MAX_JOURNEY_MIN = 360;
   const DAY_CLASS_LABELS = { feriale: "Feriale (Lun-Ven)", sabato: "Sabato", festivo: "Domenica e festivi" };
+  const WALK_M_PER_MIN = 70;
+  const POINT_WALK_RADIUS_M = 1500;   // stops considered around an address
+  const POINT_MAX_STOPS = 25;
+  const WALK_DETOUR = 1.25;           // streets are longer than the straight line
 
   // Every run of every line for one kind of day, grouped by identical stop sequence.
   function patternsForDay(dayClass) {
@@ -1137,31 +1442,53 @@
     const links = [];
     (state.stopClusters[stopId] || new Set()).forEach(id => { if (id !== stopId) links.push({ to: id, walk: 0 }); });
     (state.nearbyCrossMode[stopId] || []).forEach(n => {
-      const walk = Math.max(2, Math.round(n.dist / 70));
+      const walk = Math.max(2, Math.round(n.dist / WALK_M_PER_MIN));
       links.push({ to: n.id, walk });
       (state.stopClusters[n.id] || new Set()).forEach(id => { if (id !== n.id) links.push({ to: id, walk }); });
     });
     return links;
   }
 
-  function raptorFrom(day, startMin, originCluster, destCluster) {
+  // The stops one can walk to from an address, with the walking time of each.
+  function stopsNearPoint(lat, lon) {
+    const near = [];
+    Object.values(state.stops).forEach(s => {
+      const d = haversineMeters(lat, lon, s.lat, s.lon);
+      if (d <= POINT_WALK_RADIUS_M) near.push([s.id, Math.max(1, Math.ceil(d * WALK_DETOUR / WALK_M_PER_MIN))]);
+    });
+    near.sort((a, b) => a[1] - b[1]);
+    return new Map(near.slice(0, POINT_MAX_STOPS));
+  }
+
+  function raptorFrom(day, startMin, origins, dests) {
     const { at } = day;
     const best = new Map();       // stop -> best arrival with any number of legs
     const ready = new Map();      // stop -> {time, label}: earliest moment one can board there
     const found = [];
-    let marked = new Set(originCluster);
-    originCluster.forEach(s => {
-      best.set(s, startMin);
-      ready.set(s, { time: startMin, label: { kind: "origin", arr: startMin, legs: 0, parent: null } });
+    const originLabel = { kind: "origin", arr: startMin, legs: 0, parent: null };
+    let marked = new Set();
+    origins.forEach((walk, s) => {
+      if (walk === 0) {
+        best.set(s, startMin);
+        ready.set(s, { time: startMin, label: originLabel });
+      } else {   // an address: walk to the stop first
+        const label = { kind: "walk", arr: startMin + walk, legs: 0, parent: originLabel, walk, from: "__origin__", to: s };
+        best.set(s, startMin + walk);
+        ready.set(s, { time: startMin + walk + 1, label });
+      }
+      marked.add(s);
     });
-    // a short walk from the origin to a stop of the other kind (a station next to a bus stop)
-    originCluster.forEach(s => footLinks(s).forEach(({ to, walk }) => {
-      if (walk === 0 || originCluster.has(to) || startMin + walk >= (best.get(to) ?? Infinity)) return;
-      const label = { kind: "walk", arr: startMin + walk, legs: 0, parent: ready.get(s).label, walk, from: s, to };
-      best.set(to, startMin + walk);
-      ready.set(to, { time: startMin + walk + 1, label });
-      marked.add(to);
-    }));
+    // a named origin: also a short walk to a stop of the other kind (a station next to a bus stop)
+    origins.forEach((walk, s) => {
+      if (walk !== 0) return;
+      footLinks(s).forEach(({ to, walk: w }) => {
+        if (w === 0 || origins.has(to) || startMin + w >= (best.get(to) ?? Infinity)) return;
+        const label = { kind: "walk", arr: startMin + w, legs: 0, parent: originLabel, walk: w, from: s, to };
+        best.set(to, startMin + w);
+        ready.set(to, { time: startMin + w + 1, label });
+        marked.add(to);
+      });
+    });
     let destBest = Infinity;
 
     for (let round = 1; round <= MAX_LEGS; round++) {
@@ -1184,12 +1511,12 @@
               };
               best.set(sid, arr);
               improved.set(sid, label);
-              if (destCluster.has(sid)) destBest = Math.min(destBest, arr);
+              if (dests.has(sid)) destBest = Math.min(destBest, arr + dests.get(sid));
             }
           }
           const r = ready.get(sid);
           if (r) {
-            const limit = r.label.kind === "origin" ? MAX_FIRST_WAIT : MAX_WAIT_TRANSFER;
+            const limit = r.label.legs === 0 ? MAX_FIRST_WAIT : MAX_WAIT_TRANSFER;
             const prevTrip = r.label.kind === "ride" ? r.label.trip : (r.label.kind === "walk" ? r.label.parent.trip : null);
             if (!trip || r.time <= trip.dep[i]) {
               const cand = p.trips.find(t => t.dep[i] >= r.time && t.dep[i] - r.time <= limit && t !== prevTrip);
@@ -1220,26 +1547,30 @@
         marked.add(sid);
       });
 
-      // arrivals at the destination this round
-      let top = null;
-      destCluster.forEach(sid => {
-        const l = reached.get(sid);   // by vehicle, or by vehicle plus a short walk to the destination
-        if (l && l.legs === round && (!top || l.arr < top.arr)) top = l;
+      // arrivals at the destination this round (a walk to the destination counts too)
+      let top = null, topTotal = Infinity, topWalk = 0;
+      dests.forEach((destWalk, sid) => {
+        const l = reached.get(sid);
+        if (!l || l.legs !== round || (destWalk > 0 && l.kind !== "ride")) return;
+        if (l.arr + destWalk < topTotal) { top = l; topTotal = l.arr + destWalk; topWalk = destWalk; }
       });
-      if (top) found.push(top);
+      if (top) found.push({ label: top, destWalk: topWalk });
       if (!marked.size) break;
     }
     return found;
   }
 
-  const MAX_WAIT_TRANSFER = 90;
-
-  function journeyFromLabel(label) {
+  function journeyFromLabel({ label, destWalk }) {
     const rides = [];
     for (let l = label; l; l = l.parent) {
       if (l.kind === "ride") rides.unshift(l);
     }
-    const finalWalk = label.kind === "walk" && label.walk > 0 ? { from: label.from, to: label.to, min: label.walk } : null;
+    let finalWalk = null;
+    if (destWalk > 0) {
+      finalWalk = { from: label.pattern.stops[label.alightIdx], to: "__dest__", min: destWalk };
+    } else if (label.kind === "walk" && label.walk > 0) {
+      finalWalk = { from: label.from, to: label.to, min: label.walk };
+    }
     const before = rides[0].parent;
     const initialWalk = before && before.kind === "walk" && before.parent && before.parent.kind === "origin"
       ? { from: before.from, to: before.to, min: before.walk } : null;
@@ -1250,41 +1581,47 @@
     }));
     const transfers = [];
     for (let i = 0; i < rides.length - 1; i++) {
+      const a = state.stops[legs[i].toStop], b = state.stops[legs[i + 1].fromStop];
       const walkMin = legs[i].toStop === legs[i + 1].fromStop ? 0
-        : Math.max(2, Math.round((() => {
-          const a = state.stops[legs[i].toStop], b = state.stops[legs[i + 1].fromStop];
-          return a && b ? haversineMeters(a.lat, a.lon, b.lat, b.lon) : 0;
-        })() / 70));
+        : Math.max(2, Math.round((a && b ? haversineMeters(a.lat, a.lon, b.lat, b.lon) : 0) / WALK_M_PER_MIN));
       transfers.push({ walkMin, waitMin: timeToMinutes(legs[i + 1].depTime) - timeToMinutes(legs[i].arrTime) });
     }
     const dep = timeToMinutes(legs[0].depTime) - (initialWalk ? initialWalk.min + 1 : 0);
     const arr = timeToMinutes(legs[legs.length - 1].arrTime) + (finalWalk ? finalWalk.min : 0);
     const clock = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}:00`;
-    const arrText = clock(arr), depText = clock(dep);
     return {
       type: legs.length === 1 ? "diretto" : "cambio", duration: arr - dep, depMin: dep, legs, transfers, finalWalk,
-      initialWalk, arrText, depText,
+      initialWalk, arrText: clock(arr), depText: clock(dep),
       waitMinutes: transfers[0] ? transfers[0].waitMin : 0, walkMinutes: transfers[0] ? transfers[0].walkMin : 0,
     };
   }
 
-  async function multiLegSearch(originCluster, destCluster) {
+  // origins / dests: Map(stopId -> minutes on foot, 0 for a named stop)
+  async function multiLegSearch(origins, dests, includeDirect) {
     await ensureTimetablesLoaded(state.routes.map(r => r.id));
     const classes = plannerState.dayFilter === "__any__" ? ["feriale", "sabato", "festivo"] : [plannerState.dayFilter];
+    // stops one can leave from: the origin stops, and for a named stop the other-kind stops next to it
+    const startStops = new Map();
+    origins.forEach((walk, s) => {
+      startStops.set(s, Math.min(walk, startStops.get(s) ?? Infinity));
+      if (walk === 0) footLinks(s).forEach(({ to, walk: w }) => {
+        if (w > 0 && !origins.has(to)) startStops.set(to, Math.min(w + 1, startStops.get(to) ?? Infinity));
+      });
+    });
     const options = [];
     classes.forEach(cls => {
       const day = patternsForDay(cls);
-      // every departure time from the origin is a starting point
-      const starts = new Set();
-      originCluster.forEach(sid => (day.at.get(sid) || []).forEach(({ p, i }) => {
-        if (i < p.stops.length - 1) p.trips.forEach(t => starts.add(t.dep[i]));
+      const starts = new Set();   // every departure from those stops gives a starting time
+      startStops.forEach((walk, sid) => (day.at.get(sid) || []).forEach(({ p, i }) => {
+        if (i < p.stops.length - 1) p.trips.forEach(t => starts.add(t.dep[i] - walk - (walk > 0 ? 1 : 0)));
       }));
       let times = Array.from(starts).sort((a, b) => a - b);
-      if (times.length > 150) times = times.filter((_, i) => i % Math.ceil(times.length / 150) === 0);
+      if (times.length > 200) times = times.filter((_, i) => i % Math.ceil(times.length / 200) === 0);
       times.forEach(startMin => {
-        raptorFrom(day, startMin, originCluster, destCluster).forEach(label => {
-          const opt = journeyFromLabel(label);
-          if ((opt.legs.length > 1 || opt.finalWalk || opt.initialWalk) && opt.legs.every((l, i) => i === 0 || l.tripId !== opt.legs[i - 1].tripId)) {
+        raptorFrom(day, startMin, origins, dests).forEach(found => {
+          const opt = journeyFromLabel(found);
+          const fresh = opt.legs.every((l, i) => i === 0 || l.tripId !== opt.legs[i - 1].tripId);
+          if (fresh && (includeDirect || opt.legs.length > 1 || opt.finalWalk || opt.initialWalk)) {
             opt.multi = true;
             opt.dayClass = cls;
             options.push(opt);
@@ -1302,8 +1639,8 @@
       resultsEl.innerHTML = `<div class="empty-note">Nessuna combinazione trovata con questi filtri. Prova a cambiare ${hint}.</div>`;
       return;
     }
-    const originName = stopDisplayName(plannerState.originId);
-    const destName = stopDisplayName(plannerState.destId);
+    const originName = placeName(plannerState.originId);
+    const destName = placeName(plannerState.destId);
 
     const header = `<div class="panel-section-label" style="margin-top:14px;">
         ${options.length}${totalCount > options.length ? ` di ${totalCount}` : ""} combinazioni &middot; ${originName} &rarr; ${destName}
@@ -1337,7 +1674,7 @@
             <div class="journey-changes" style="margin-top:2px;">${opt.dayLabel}</div>
           </div>
           <div class="journey-detail" id="journey-detail-${idx}">
-            ${opt.initialWalk ? `<div class="journey-wait">A piedi da ${stopDisplayName(opt.initialWalk.from)} a ${stopDisplayName(opt.initialWalk.to)} (~${opt.initialWalk.min} min)</div>` : ""}
+            ${opt.initialWalk ? `<div class="journey-wait">A piedi da ${escapeHtml(placeName(opt.initialWalk.from))} a ${escapeHtml(placeName(opt.initialWalk.to))} (~${opt.initialWalk.min} min)</div>` : ""}
             ${opt.legs.map((l, i) => `
               <div class="journey-leg-block" style="border-color:${routeOfSafe(l.routeId).color}">
                 <div class="journey-leg-title">${modeIcon(routeOfSafe(l.routeId).mode)}${routeOfSafe(l.routeId).short_name} &middot; ${routeOfSafe(l.routeId).long_name}</div>
@@ -1345,24 +1682,27 @@
               </div>
               ${i < opt.legs.length - 1 ? renderWaitNote(opt, i) : ""}
             `).join("")}
-            ${opt.finalWalk ? `<div class="journey-wait">Poi a piedi da ${stopDisplayName(opt.finalWalk.from)} a ${stopDisplayName(opt.finalWalk.to)} (~${opt.finalWalk.min} min)</div>` : ""}
+            ${opt.finalWalk ? `<div class="journey-wait">Poi a piedi da ${escapeHtml(placeName(opt.finalWalk.from))} a ${escapeHtml(placeName(opt.finalWalk.to))} (~${opt.finalWalk.min} min)</div>` : ""}
           </div>
         </div>`;
     }).join("");
 
     resultsEl.innerHTML = header + rowsHtml;
 
-    resultsEl.querySelectorAll("[data-idx]").forEach(head => {
-      head.addEventListener("click", () => {
-        const detail = document.getElementById(`journey-detail-${head.dataset.idx}`);
-        detail.classList.toggle("open");
-        if (!detail.classList.contains("open")) { clearFocus(); return; }
-        const opt = options[head.dataset.idx];
-        highlightRoutes(Array.from(new Set(opt.legs.map(l => l.routeId))));
-        focusStops(journeyStopIds(opt), routeOfSafe(opt.legs[0].routeId).color);
-        closeDrawer();
+    const openResult = (idx, byUser) => {
+      resultsEl.querySelectorAll(".journey-detail.open").forEach(d => {
+        if (d.id !== `journey-detail-${idx}`) d.classList.remove("open");
       });
+      const detail = document.getElementById(`journey-detail-${idx}`);
+      if (byUser) detail.classList.toggle("open"); else detail.classList.add("open");
+      if (!detail.classList.contains("open")) { clearFocus(); return; }
+      showJourneyOnMap(options[idx]);
+      if (byUser) closeDrawer();
+    };
+    resultsEl.querySelectorAll("[data-idx]").forEach(head => {
+      head.addEventListener("click", () => openResult(head.dataset.idx, true));
     });
+    openResult(0, false);
   }
 
   // Every stop of the journey, from boarding to alighting on each leg.
