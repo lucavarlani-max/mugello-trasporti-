@@ -35,8 +35,8 @@ body {
   display: flex;
   align-items: center;
   gap: 16px;
-  height: 64px;
-  padding: 0 16px;
+  min-height: calc(64px + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
   background: var(--navy);
   color: #fff;
   position: relative;
@@ -530,7 +530,7 @@ select#stop-filter {
 
 /* compact (phones, tablets): sidebar becomes a drawer, details panel a bottom sheet */
 @media (max-width: 1000px) {
-  #topbar { gap: 8px; padding: 0 10px; }
+  #topbar { gap: 8px; padding: env(safe-area-inset-top, 0px) max(10px, env(safe-area-inset-right, 0px)) 0 max(10px, env(safe-area-inset-left, 0px)); }
   .search-wrap { min-width: 0; }
   .brand { flex: none; }
   .menu-toggle { display: inline-flex; align-items: center; flex: none; }
@@ -595,7 +595,7 @@ select#stop-filter {
 
 /* phones: brand and menu on the first row, search on its own row */
 @media (max-width: 560px) {
-  #topbar { height: auto; flex-wrap: wrap; padding: 8px 10px; row-gap: 8px; }
+  #topbar { min-height: 0; flex-wrap: wrap; padding: calc(8px + env(safe-area-inset-top, 0px)) max(10px, env(safe-area-inset-right, 0px)) 8px max(10px, env(safe-area-inset-left, 0px)); row-gap: 8px; }
   .brand { flex: 1; font-size: 18px; }
   .brand small { display: none; }
   .menu-toggle { order: 2; }
@@ -807,7 +807,7 @@ h1.brand-h1 { display: contents; margin: 0; font: inherit; }
   cursor: pointer;
 }
 .footer-link:hover { color: #fff; }
-#consent-banner {
+#consent-banner, .float-note {
   position: fixed;
   left: 12px;
   bottom: 48px;
@@ -823,8 +823,8 @@ h1.brand-h1 { display: contents; margin: 0; font: inherit; }
   font-size: 0.82rem;
   line-height: 1.45;
 }
-#consent-banner p { margin: 0 0 10px; }
-#consent-banner a { color: var(--navy-2); }
+#consent-banner p, .float-note p { margin: 0 0 10px; }
+#consent-banner a, .float-note a { color: var(--navy-2); }
 .consent-actions { display: flex; gap: 10px; }
 .consent-actions button {
   flex: 1;
@@ -840,3 +840,37 @@ h1.brand-h1 { display: contents; margin: 0; font: inherit; }
 .consent-actions button:hover { background: #eef1f4; }
 .noscript { padding: 24px; max-width: 640px; margin: 0 auto; font-size: 1rem; line-height: 1.5; }
 @media (max-width: 560px) { .footer-bar { gap: 6px 10px; } }
+
+/* ---------- installed app and device refinements ---------- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
+button, a, select, input, .chip { touch-action: manipulation; }
+.share-icon { vertical-align: -4px; }
+.install-btn { font-weight: 600; color: #f0c48f; }
+@media (display-mode: standalone) { .install-btn { display: none; } }
+
+/* large monitors: wider side columns */
+@media (min-width: 1600px) {
+  #sidebar { width: 340px; min-width: 340px; }
+  #panel { width: 420px; min-width: 420px; }
+}
+
+/* phones held sideways: little height, so slim bars and a taller sheet */
+@media (max-height: 480px) and (max-width: 1000px) {
+  #topbar { min-height: calc(46px + env(safe-area-inset-top, 0px)); }
+  .brand-mark { width: 30px; height: 30px; }
+  .brand small { display: none; }
+  .footer-bar { padding-top: 3px; padding-bottom: calc(3px + env(safe-area-inset-bottom, 0px)); }
+  .footer-details { max-height: 70vh; }
+}
+/* ...and the details panel becomes a right-hand column instead of a sheet that would cover the whole map */
+@media (max-height: 480px) and (min-width: 561px) and (max-width: 1000px) {
+  #panel {
+    top: 0; bottom: 0; left: auto; right: 0;
+    width: min(48%, 400px); height: auto;
+    border-top: none; border-left: 1px solid var(--border); border-radius: 0;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.18);
+    padding: 14px 14px calc(14px + env(safe-area-inset-bottom, 0px)) 14px;
+  }
+  #panel::before { display: none; }
+}

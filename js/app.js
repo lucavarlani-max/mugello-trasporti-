@@ -437,8 +437,13 @@
   // The map is partly covered by the bottom sheet on compact screens: keep the target in the visible part.
   function fitMapTo(bounds) {
     map.invalidateSize({ pan: false }); // the side panel may have just changed the map width
-    const sheetHeight = isCompact() && !panelEl.classList.contains("hidden") ? panelEl.getBoundingClientRect().height : 0;
-    map.fitBounds(bounds, { paddingTopLeft: [24, 24], paddingBottomRight: [24, sheetHeight + 24], maxZoom: 16 });
+    // On compact screens the panel overlays the map (a bottom sheet, or a right column when held sideways)
+    let coverBottom = 0, coverRight = 0;
+    if (isCompact() && !panelEl.classList.contains("hidden")) {
+      const p = panelEl.getBoundingClientRect(), m = document.getElementById("map").getBoundingClientRect();
+      if (p.width >= m.width * 0.9) coverBottom = p.height; else coverRight = p.width;
+    }
+    map.fitBounds(bounds, { paddingTopLeft: [24, 24], paddingBottomRight: [coverRight + 24, coverBottom + 24], maxZoom: 16 });
   }
 
   function clearFocus() {
