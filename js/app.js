@@ -1,10 +1,11 @@
 (() => {
   "use strict";
 
-  const MUGELLO_CENTER = [43.95, 11.45];
-  const DEFAULT_ZOOM = 10;
+  // Opening view: from Barberino and Firenzuola in the north-west to Dicomano and Marradi in the east,
+  // fitted to the screen so the Mugello is centred on phones and desktops alike.
+  const MUGELLO_BOUNDS = L.latLngBounds([43.84, 11.2], [44.14, 11.64]);
 
-  const map = L.map("map", { zoomControl: true }).setView(MUGELLO_CENTER, DEFAULT_ZOOM);
+  const map = L.map("map", { zoomControl: true }).fitBounds(MUGELLO_BOUNDS);
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 18,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
