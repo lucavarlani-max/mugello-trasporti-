@@ -278,7 +278,7 @@ def select_train_routes(gtfs):
         if not re.search(r"borgo sl", name, re.I):
             continue
         if re.search(r"pontassieve", name, re.I):
-            meta = {"id": "treno-pontassieve", "short_name": "Faentina (via Pontassieve)",
+            meta = {"id": "treno-pontassieve", "short_name": "Firenze via Pontassieve",
                     "long_name": "Firenze - Pontassieve - Rufina - Dicomano - Borgo San Lorenzo", "color": "#8E44AD"}
         else:
             meta = {"id": "treno-faenza", "short_name": "Faentina",
