@@ -181,7 +181,7 @@
           <b>${late}</b> con ritardo oltre 5 min &middot; <b>${canceled}</b> soppressi</div>
         ${active.map(t => trainCard(t, now)).join("") || '<div class="empty-note">Nessun altro treno previsto oggi.</div>'}
         ${done.length ? `<details class="delay-done"><summary>Già conclusi (${done.length})</summary>${done.map(t => trainCard(t, now)).join("")}</details>` : ""}`
-        : '<div class="empty-note">Nessun treno della Faentina presente nel feed in questo momento.</div>';
+        : '<div class="empty-note">Nessun treno presente nel feed in questo momento.</div>';
     } else {
       const rows = trains.map(t => stationRow(t, stationFilter, now)).filter(Boolean).sort((a, b) => a.predicted - b.predicted);
       body = rows.length ? rows.map(r => r.html).join("") : '<div class="empty-note">Nessun treno previsto da questa stazione.</div>';
@@ -204,7 +204,7 @@
       ${status}
       <div class="panel-section-label">Stazione</div>
       <select id="delay-station" class="pane-select">
-        <option value="__all__">Tutti i treni della Faentina</option>${stationOptions}
+        <option value="__all__">Tutti i treni</option>${stationOptions}
       </select>
       <div class="panel-section-label" style="margin-top:12px;">${stationFilter === "__all__" ? "Treni di oggi" : "Prossimi treni da qui"}</div>
       ${body}
