@@ -56,18 +56,6 @@
     <div id="tab-schools" class="tab-pane hidden"></div>
     <div id="tab-delays" class="tab-pane hidden"></div>
     <div id="meteo-widget" class="meteo-widget hidden"></div>
-    <div class="sidebar-footer">
-      <div id="validity" class="validity"></div>
-      Dati: Regione Toscana &mdash; Open Data TPL (CC-BY), feed Trenitalia e Autolinee Toscane.
-      Orari indicativi: verificare eventuali variazioni sui canali ufficiali.
-      <div id="visit-counter" class="visit-counter hidden"></div>
-      <div class="copyright">
-        &copy; 2026 Luca Varlani &mdash; <b>Mugello in Movimento</b>. Tutti i diritti riservati.
-        Il sito (codice, grafica, struttura e contenuti originali) &egrave; di propriet&agrave; dell'autore:
-        ne sono vietate la copia, la riproduzione e il riutilizzo, anche parziali, senza autorizzazione scritta.
-        I dati di terzi restano soggetti alle rispettive licenze.
-      </div>
-    </div>
   </aside>
   <div id="drawer-backdrop" class="drawer-backdrop"></div>
 
@@ -78,6 +66,39 @@
     <div id="panel-content"></div>
   </section>
 </div>
+
+<footer id="site-footer">
+  <div id="footer-details" class="footer-details" role="region" aria-label="Fonti e note">
+    <div class="footer-grid">
+      <section>
+        <h3>Fonti dei dati</h3>
+        <ul>
+          <li><b>Orari e percorsi:</b> Regione Toscana, Open Data TPL (CC-BY): feed di Trenitalia e Autolinee Toscane.</li>
+          <li><b>Ritardi dei treni:</b> <a href="https://proxy.busone.app/" target="_blank" rel="noopener">BusOne</a>, dati derivati da ViaggiaTreno (&copy; Trenitalia S.p.A. / Gruppo FS Italiane), solo uso non commerciale.</li>
+          <li><b>Mappa:</b> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors.</li>
+          <li><b>Meteo:</b> <a href="https://lucavarlani-max.github.io/mugello_meteoeclima/" target="_blank" rel="noopener">Mugello Meteo &amp; Clima</a>.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>Note</h3>
+        <p id="validity" class="validity"></p>
+        <p>Gli orari sono indicativi: verificare eventuali variazioni sui canali ufficiali. I ritardi sono in tempo reale e possono essere imprecisi o incompleti.</p>
+      </section>
+      <section>
+        <h3>Diritti</h3>
+        <p>&copy; 2026 Luca Varlani &mdash; <b>Mugello in Movimento</b>. Tutti i diritti riservati.
+          Il sito (codice, grafica, struttura e contenuti originali) &egrave; di propriet&agrave; dell'autore:
+          ne sono vietate la copia, la riproduzione e il riutilizzo, anche parziali, senza autorizzazione scritta.
+          I dati di terzi restano soggetti alle rispettive licenze.</p>
+      </section>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span class="footer-copy">&copy; 2026 Luca Varlani<span class="hide-sm"> &middot; Tutti i diritti riservati</span></span>
+    <span id="visit-counter" class="visit-counter hidden"></span>
+    <button id="footer-toggle" class="footer-toggle" type="button" aria-expanded="false" aria-controls="footer-details">Fonti e note</button>
+  </div>
+</footer>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>

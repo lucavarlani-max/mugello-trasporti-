@@ -160,6 +160,8 @@
     const today = new Date().toISOString().slice(0, 10);
     const expired = today > meta.bus[1];
     el.className = "validity" + (expired ? " expired" : "");
+    const toggle = document.getElementById("footer-toggle");
+    if (toggle) toggle.classList.toggle("warn", expired);
     el.textContent = expired
       ? `Attenzione: gli orari bus sono scaduti il ${fmtDate(meta.bus[1])}. Aggiornare i dati (tools/build_data.py).`
       : `Orari bus validi dal ${fmtDate(meta.bus[0])} al ${fmtDate(meta.bus[1])}; treni fino al ${fmtDate(meta.train && meta.train[1])}.`;
@@ -370,6 +372,20 @@
     sidebarEl.classList.toggle("open");
   });
   document.getElementById("drawer-backdrop").addEventListener("click", () => sidebarEl.classList.remove("open"));
+
+  // Page footer: sources and notes open as a sheet above the footer bar
+  const footerToggle = document.getElementById("footer-toggle");
+  const footerDetails = document.getElementById("footer-details");
+  function setFooterOpen(open) {
+    footerDetails.classList.toggle("open", open);
+    footerToggle.setAttribute("aria-expanded", String(open));
+    footerToggle.textContent = open ? "Chiudi" : "Fonti e note";
+  }
+  footerToggle.addEventListener("click", () => setFooterOpen(!footerDetails.classList.contains("open")));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setFooterOpen(false); });
+  document.addEventListener("click", e => {
+    if (footerDetails.classList.contains("open") && !e.target.closest("#site-footer")) setFooterOpen(false);
+  });
 
   // Below 1000px the sidebar is a drawer and the details panel a bottom sheet over the map
   const compactQuery = window.matchMedia("(max-width: 1000px)");
