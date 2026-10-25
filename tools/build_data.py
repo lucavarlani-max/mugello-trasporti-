@@ -77,7 +77,7 @@ def fetch_feed(url, dest):
     os.makedirs(dest, exist_ok=False)
     zip_path = os.path.join(dest, "feed.zip")
     log("downloading", url)
-    req = urllib.request.Request(url, headers={"User-Agent": "mugello-in-movimento-build/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "mugellotrasporti-build/1.0"})
     with urllib.request.urlopen(req, timeout=600) as r, open(zip_path, "wb") as f:
         shutil.copyfileobj(r, f)
     out = os.path.join(dest, "gtfs")

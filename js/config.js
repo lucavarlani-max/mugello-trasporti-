@@ -16,7 +16,7 @@ window.MUGELLO_CONFIG = {
   // Identificazione verso BusOne, la fonte dei ritardi dei treni. Formato suggerito:
   // "organizzazione; nome app; contatto". Se vuoto, non viene inviata alcuna intestazione:
   // il servizio risponde ugualmente ma ha annunciato che smetterà di accettare richieste anonime.
-  busoneClient: "privato; Mugello in Movimento; luca.varlani@gmail.com",
+  busoneClient: "privato; Mugellotrasporti; luca.varlani@gmail.com",
   // personal | nonprofit | commercial. L'uso commerciale richiede il consenso scritto di BusOne.
   busoneUse: "personal",
 };
