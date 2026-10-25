@@ -12,7 +12,7 @@ window.MUGELLO_CONFIG = {
   // Contatore visite (GoatCounter, statistiche anonime). Crea il sito su goatcounter.com, attiva in
   // Settings "Allow adding visitor counts on your website" e scrivi qui il codice scelto
   // (la parte prima di .goatcounter.com). Se vuoto, il contatore non compare.
-  goatcounterCode: "",
+  goatcounterCode: "mugellotrasporti",
   // Identificazione verso BusOne, la fonte dei ritardi dei treni. Formato suggerito:
   // "organizzazione; nome app; contatto". Se vuoto, non viene inviata alcuna intestazione:
   // il servizio risponde ugualmente ma ha annunciato che smetterà di accettare richieste anonime.
