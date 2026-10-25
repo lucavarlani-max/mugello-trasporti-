@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Logo Mugellotrasporti</title>
+<style>
+  @font-face { font-family: "Bricolage Grotesque"; font-weight: 800; src: url("../fonts/bricolage-grotesque-800.woff2") format("woff2"); }
+  @font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("../fonts/ibm-plex-mono-500.woff2") format("woff2"); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --ink:#16261f; --faint:#7d8a82; --pine:#0f6b52; --sky:#2f7cc4; --amber:#c9671f; --stop:#ffffff; --bg:#f4f6f2; }
+  .dark { --ink:#eaf2ec; --faint:#adbcb2; --pine:#3ba883; --sky:#67aef0; --amber:#e0975a; --stop:#16211c; --bg:#16211c; }
+  html, body { background: transparent; }
+  .m-ridge { stroke: var(--pine); } .m-route { stroke: var(--sky); } .m-stop { fill: var(--stop); stroke: var(--sky); } .m-end { fill: var(--amber); stroke: var(--stop); }
+  svg.mark { display: block; width: 100%; height: 100%; }
+
+  .lockup { display: inline-flex; align-items: center; gap: 44px; font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; font-size: 80px; letter-spacing: -0.02em; line-height: 1; color: var(--ink); white-space: nowrap; }
+  .lockup .mk { width: 148px; height: 148px; flex: none; }
+  .lockup .sky { color: var(--sky); }
+  .lockup small { display: block; margin-top: 14px; font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 500; font-size: 30px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--faint); }
+
+  .stage { padding: 30px 40px; display: none; }
+  .appicon { width: 512px; height: 512px; background: #f4f6f2; border-radius: 112px; display: none; align-items: center; justify-content: center; }
+  .appicon svg { width: 82%; height: 82%; }
+  .appicon.dark-bg { background: #16211c; }
+
+  body.v-light .stage.lockup-stage, body.v-dark .stage.lockup-stage { display: inline-block; }
+  body.v-mark .stage.mark-stage { display: block; width: 512px; height: 512px; padding: 24px; }
+  body.v-icon .appicon { display: flex; }
+  body.v-sheet { background: #f4f6f2; }
+  body.v-sheet .sheet { display: grid; }
+  .sheet { display: none; grid-template-columns: auto auto; gap: 40px; padding: 40px; width: 1700px; }
+  .panel { padding: 40px; border-radius: 28px; }
+  .panel.dark { background: #16211c; }
+  .panel.light { background: #ffffff; border: 2px solid #e3e8e1; }
+  .sheet .appicon { display: flex; width: 220px; height: 220px; border-radius: 48px; }
+  .row { display: flex; gap: 24px; align-items: flex-end; flex-wrap: wrap; }
+  .sizes { display: flex; gap: 30px; align-items: flex-end; }
+</style>
+</head>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="mark" viewBox="0 0 40 40" fill="none">
+        <path class="m-ridge" d="M2 16 L10 7 L17 13 L26 4 L38 16" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path class="m-route" d="M5 34 C11 26 15 36 21 30.5 C27 25 31 32 35 26" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="m-stop" cx="5" cy="34" r="2.4" stroke-width="1.8"/>
+        <circle class="m-stop" cx="21" cy="30.5" r="2.4" stroke-width="1.8"/>
+        <circle class="m-end" cx="35.5" cy="25.5" r="3.2" stroke-width="1.4"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="stage lockup-stage">
+    <div class="lockup"><span class="mk"><svg class="mark"><use href="#mark"/></svg></span>
+      <span>Mugello<span class="sky">trasporti</span><small>Bus · treni · orari della vallata</small></span></div>
+  </div>
+
+  <div class="stage mark-stage"><svg class="mark"><use href="#mark"/></svg></div>
+
+  <div class="appicon"><svg class="mark"><use href="#mark"/></svg></div>
+
+  <div class="sheet">
+    <div class="panel light">
+      <div class="lockup"><span class="mk"><svg class="mark"><use href="#mark"/></svg></span>
+        <span>Mugello<span class="sky">trasporti</span><small>Bus · treni · orari della vallata</small></span></div>
+    </div>
+    <div class="panel dark dark-theme">
+      <div class="lockup dark"><span class="mk"><svg class="mark"><use href="#mark"/></svg></span>
+        <span>Mugello<span class="sky">trasporti</span><small>Bus · treni · orari della vallata</small></span></div>
+    </div>
+    <div class="panel light">
+      <div class="sizes">
+        <div class="appicon"><svg class="mark"><use href="#mark"/></svg></div>
+        <div style="width:96px;height:96px"><svg class="mark"><use href="#mark"/></svg></div>
+        <div style="width:48px;height:48px"><svg class="mark"><use href="#mark"/></svg></div>
+        <div style="width:24px;height:24px"><svg class="mark"><use href="#mark"/></svg></div>
+        <div style="width:16px;height:16px"><svg class="mark"><use href="#mark"/></svg></div>
+      </div>
+    </div>
+    <div class="panel dark dark-theme">
+      <div class="sizes dark">
+        <div class="appicon dark-bg"><svg class="mark"><use href="#mark"/></svg></div>
+        <div style="width:96px;height:96px"><svg class="mark"><use href="#mark"/></svg></div>
+        <div style="width:48px;height:48px"><svg class="mark"><use href="#mark"/></svg></div>
+        <div style="width:24px;height:24px"><svg class="mark"><use href="#mark"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const v = (location.hash || "#sheet").slice(1);
+  document.body.classList.add("v-" + (["dark"].includes(v) ? "dark" : v));
+  if (v === "dark") document.documentElement.classList.add("dark");
+  document.querySelectorAll(".dark").forEach(el => el.style.setProperty("color-scheme", "dark"));
+</script>
+</body>
+</html>

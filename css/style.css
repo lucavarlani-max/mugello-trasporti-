@@ -43,16 +43,35 @@ body {
   z-index: 1000;
 }
 
-.brand-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  display: block;
-  line-height: 1.1;
+@font-face { font-family: "Bricolage Grotesque"; font-weight: 800; font-display: swap; src: url("../fonts/bricolage-grotesque-800.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("../fonts/ibm-plex-mono-500.woff2") format("woff2"); }
+
+/* logo: same family as Mugello Meteo & Clima (tonal wordmark, mono tagline), dark-theme palette */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #eaf2ec;
+  text-decoration: none;
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
 }
-.brand-sub {
-  font-size: 0.72rem;
-  color: #c9d2dc;
+.brand-mark { width: 37px; height: 37px; flex: none; }
+.brand-mark svg { display: block; width: 100%; height: 100%; }
+.brand-sky { color: #67aef0; }
+.brand small {
   display: block;
+  margin-top: 5px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-weight: 500;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #adbcb2;
 }
 
 .search-wrap {
@@ -514,7 +533,6 @@ select#stop-filter {
   #topbar { gap: 8px; padding: 0 10px; }
   .search-wrap { min-width: 0; }
   .brand { flex: none; }
-  .brand-sub { display: none; }
   .menu-toggle { display: inline-flex; align-items: center; flex: none; }
 
   #sidebar {
@@ -578,8 +596,8 @@ select#stop-filter {
 /* phones: brand and menu on the first row, search on its own row */
 @media (max-width: 560px) {
   #topbar { height: auto; flex-wrap: wrap; padding: 8px 10px; row-gap: 8px; }
-  .brand { flex: 1; }
-  .brand-title { font-size: 1rem; }
+  .brand { flex: 1; font-size: 18px; }
+  .brand small { display: none; }
   .menu-toggle { order: 2; }
   .search-wrap { order: 3; flex: 1 1 100%; max-width: none; }
   .journey-top-row, .delay-head { flex-wrap: wrap; }

@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preload" href="fonts/bricolage-grotesque-800.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="canonical" href="https://www.mugellotrasporti.it/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mugello in Movimento">
@@ -32,10 +36,16 @@
 <body>
 
 <header id="topbar">
-  <div class="brand">
-    <span class="brand-title">Mugello in Movimento</span>
-    <span class="brand-sub">Treni e autobus &middot; Mugello, Alto Mugello, Val di Sieve</span>
-  </div>
+  <a class="brand" href="./" aria-label="Mugellotrasporti, vai all'inizio">
+    <span class="brand-mark"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
+      <path d="M2 16 L10 7 L17 13 L26 4 L38 16" stroke="#3ba883" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M5 34 C11 26 15 36 21 30.5 C27 25 31 32 35 26" stroke="#67aef0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="5" cy="34" r="2.4" fill="#1b2a3c" stroke="#67aef0" stroke-width="1.8"/>
+      <circle cx="21" cy="30.5" r="2.4" fill="#1b2a3c" stroke="#67aef0" stroke-width="1.8"/>
+      <circle cx="35.5" cy="25.5" r="3.2" fill="#e0975a" stroke="#1b2a3c" stroke-width="1.4"/>
+    </svg></span>
+    <span>Mugello<span class="brand-sky">trasporti</span><small>Bus &middot; treni &middot; orari della vallata</small></span>
+  </a>
   <div class="search-wrap">
     <input id="search-input" type="text" placeholder="Cerca una fermata o un comune (es. Vicchio, Marradi, Pontassieve...)" autocomplete="off">
     <div id="search-results" class="search-results hidden"></div>
