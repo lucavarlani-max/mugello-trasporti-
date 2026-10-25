@@ -712,7 +712,7 @@
 
       <button class="planner-search-btn" id="planner-search-btn" disabled>Cerca percorso</button>
       <div class="planner-note">
-        Calcola le combinazioni dirette e con un cambio tra le fermate di treno e autobus della zona,
+        Calcola le combinazioni dirette e con uno o più cambi tra le fermate di treno e autobus della zona,
         ordinate per durata (include brevi cambi a piedi tra una fermata bus e una stazione vicine).
       </div>
       <div id="planner-results"></div>
@@ -1038,6 +1038,16 @@
       });
     });
 
+    // Few or no results: look for journeys with more changes, or with two runs of the same line.
+    if (options.length < 8) {
+      try {
+        resultsEl.innerHTML = `<div class="empty-note">Ricerca di percorsi con più cambi…</div>`;
+        options.push(...await multiLegSearch(originCluster, destCluster));
+      } catch (err) {
+        console.error("multi-leg search failed", err);
+      }
+    }
+
     // De-duplicate: the same pair of physical runs can be found through several shared
     // stops along an overlapping stretch of two routes — keep just one row for each.
     const seenRuns = new Set();
@@ -1056,15 +1066,233 @@
       const routeSeq = opt.legs.map(l => l.routeId).join(">");
       const key = `${routeSeq}|${opt.legs[0].depTime}|${opt.legs[opt.legs.length - 1].arrTime}`;
       if (!groups.has(key)) groups.set(key, { ...opt, dayTypes: new Set() });
-      groups.get(key).dayTypes.add(opt.legs.map(l => l.dayType).join(" / "));
+      groups.get(key).dayTypes.add(opt.multi ? DAY_CLASS_LABELS[opt.dayClass]
+        : Array.from(new Set(opt.legs.map(l => l.dayType))).join(" / "));
     });
     const mergedOptions = Array.from(groups.values()).map(g => ({
       ...g, dayLabel: Array.from(g.dayTypes).join(", "),
     }));
 
+    // A journey found by the multi-change search is useless when another one leaves later (or at the
+    // same time) and arrives earlier (or at the same time), or is as good with fewer changes.
+    const arrivalOf = o => o.depMin + o.duration;
+    const kept = mergedOptions.filter(o => !o.multi || !mergedOptions.some(x => x !== o
+      && x.depMin >= o.depMin && arrivalOf(x) <= arrivalOf(o)
+      && (x.depMin > o.depMin || arrivalOf(x) < arrivalOf(o) || x.legs.length < o.legs.length)));
+    mergedOptions.length = 0;
+    mergedOptions.push(...kept);
+
     mergedOptions.sort((a, b) => a.duration - b.duration || a.depMin - b.depMin);
 
     renderPlannerResults(mergedOptions.slice(0, 40), mergedOptions.length);
+  }
+
+  // ---------- Journeys with several changes ----------
+  // Round-based earliest-arrival search (RAPTOR): round k finds the best way to reach every stop
+  // with k vehicles. It covers what the direct/one-change search above cannot, such as two
+  // different runs of the same line joined at an intermediate stop, or three or more legs.
+
+  const MAX_LEGS = 4;
+  const MAX_FIRST_WAIT = 5;   // the first run must leave right at the chosen departure time
+  const MAX_JOURNEY_MIN = 360;
+  const DAY_CLASS_LABELS = { feriale: "Feriale (Lun-Ven)", sabato: "Sabato", festivo: "Domenica e festivi" };
+
+  // Every run of every line for one kind of day, grouped by identical stop sequence.
+  function patternsForDay(dayClass) {
+    state.patternCache = state.patternCache || {};
+    if (state.patternCache[dayClass]) return state.patternCache[dayClass];
+    const patterns = new Map();
+    state.routes.forEach(route => {
+      const tt = state.timetableCache[route.id];
+      if (!tt) return;
+      tt.trips.forEach(t => {
+        if (t.stops.length < 2) return;
+        if (!dayFilterMatches(dayClass, parseDayTypeToWeekdays(t.day_type))) return;
+        const key = route.id + "|" + t.stops.map(s => s[0]).join(",");
+        let p = patterns.get(key);
+        if (!p) {
+          p = { routeId: route.id, stops: t.stops.map(s => s[0]), trips: [] };
+          patterns.set(key, p);
+        }
+        p.trips.push({
+          tripId: t.trip_id, dayType: t.day_type,
+          arr: t.stops.map(s => timeToMinutes(s[1])), dep: t.stops.map(s => timeToMinutes(s[2])),
+          arrText: t.stops.map(s => s[1]), depText: t.stops.map(s => s[2]),
+        });
+      });
+    });
+    const list = Array.from(patterns.values());
+    list.forEach(p => p.trips.sort((a, b) => a.dep[0] - b.dep[0]));
+    const at = new Map();   // stop -> [{p, i}]
+    list.forEach(p => p.stops.forEach((sid, i) => {
+      if (!at.has(sid)) at.set(sid, []);
+      at.get(sid).push({ p, i });
+    }));
+    return (state.patternCache[dayClass] = { list, at });
+  }
+
+  // Where one can go on foot from a stop: the other poles of the same place and, between a
+  // bus stop and a station, the short walk the one-change search also uses.
+  function footLinks(stopId) {
+    const links = [];
+    (state.stopClusters[stopId] || new Set()).forEach(id => { if (id !== stopId) links.push({ to: id, walk: 0 }); });
+    (state.nearbyCrossMode[stopId] || []).forEach(n => {
+      const walk = Math.max(2, Math.round(n.dist / 70));
+      links.push({ to: n.id, walk });
+      (state.stopClusters[n.id] || new Set()).forEach(id => { if (id !== n.id) links.push({ to: id, walk }); });
+    });
+    return links;
+  }
+
+  function raptorFrom(day, startMin, originCluster, destCluster) {
+    const { at } = day;
+    const best = new Map();       // stop -> best arrival with any number of legs
+    const ready = new Map();      // stop -> {time, label}: earliest moment one can board there
+    const found = [];
+    let marked = new Set(originCluster);
+    originCluster.forEach(s => {
+      best.set(s, startMin);
+      ready.set(s, { time: startMin, label: { kind: "origin", arr: startMin, legs: 0, parent: null } });
+    });
+    // a short walk from the origin to a stop of the other kind (a station next to a bus stop)
+    originCluster.forEach(s => footLinks(s).forEach(({ to, walk }) => {
+      if (walk === 0 || originCluster.has(to) || startMin + walk >= (best.get(to) ?? Infinity)) return;
+      const label = { kind: "walk", arr: startMin + walk, legs: 0, parent: ready.get(s).label, walk, from: s, to };
+      best.set(to, startMin + walk);
+      ready.set(to, { time: startMin + walk + 1, label });
+      marked.add(to);
+    }));
+    let destBest = Infinity;
+
+    for (let round = 1; round <= MAX_LEGS; round++) {
+      // earliest marked position on every line that serves a marked stop
+      const scan = new Map();
+      marked.forEach(sid => (at.get(sid) || []).forEach(({ p, i }) => {
+        if (!scan.has(p) || scan.get(p) > i) scan.set(p, i);
+      }));
+      const improved = new Map();
+      scan.forEach((from, p) => {
+        let trip = null, boardIdx = -1, boardLabel = null;
+        for (let i = from; i < p.stops.length; i++) {
+          const sid = p.stops[i];
+          if (trip) {
+            const arr = trip.arr[i];
+            if (arr < (best.get(sid) ?? Infinity) && arr < destBest && arr - startMin <= MAX_JOURNEY_MIN) {
+              const label = {
+                kind: "ride", arr, legs: boardLabel.legs + 1, parent: boardLabel,
+                pattern: p, trip, boardIdx, alightIdx: i,
+              };
+              best.set(sid, arr);
+              improved.set(sid, label);
+              if (destCluster.has(sid)) destBest = Math.min(destBest, arr);
+            }
+          }
+          const r = ready.get(sid);
+          if (r) {
+            const limit = r.label.kind === "origin" ? MAX_FIRST_WAIT : MAX_WAIT_TRANSFER;
+            const prevTrip = r.label.kind === "ride" ? r.label.trip : (r.label.kind === "walk" ? r.label.parent.trip : null);
+            if (!trip || r.time <= trip.dep[i]) {
+              const cand = p.trips.find(t => t.dep[i] >= r.time && t.dep[i] - r.time <= limit && t !== prevTrip);
+              if (cand && (!trip || cand.dep[i] < trip.dep[i])) { trip = cand; boardIdx = i; boardLabel = r.label; }
+            }
+          }
+        }
+      });
+
+      // footpaths from the stops reached this round
+      const reached = new Map(improved);
+      improved.forEach((label, sid) => {
+        footLinks(sid).forEach(({ to, walk }) => {
+          const arr = label.arr + walk;
+          if (arr < (best.get(to) ?? Infinity) && arr < destBest) {
+            reached.set(to, { kind: "walk", arr, legs: label.legs, parent: label, walk, from: sid, to });
+            best.set(to, arr);
+          }
+        });
+      });
+
+      marked = new Set();
+      reached.forEach((label, sid) => {
+        const gap = label.kind === "walk" ? Math.max(3, label.walk + 2) - label.walk : 3;
+        const time = label.arr + gap;
+        const current = ready.get(sid);
+        if (!current || time < current.time) ready.set(sid, { time, label });
+        marked.add(sid);
+      });
+
+      // arrivals at the destination this round
+      let top = null;
+      destCluster.forEach(sid => {
+        const l = reached.get(sid);   // by vehicle, or by vehicle plus a short walk to the destination
+        if (l && l.legs === round && (!top || l.arr < top.arr)) top = l;
+      });
+      if (top) found.push(top);
+      if (!marked.size) break;
+    }
+    return found;
+  }
+
+  const MAX_WAIT_TRANSFER = 90;
+
+  function journeyFromLabel(label) {
+    const rides = [];
+    for (let l = label; l; l = l.parent) {
+      if (l.kind === "ride") rides.unshift(l);
+    }
+    const finalWalk = label.kind === "walk" && label.walk > 0 ? { from: label.from, to: label.to, min: label.walk } : null;
+    const before = rides[0].parent;
+    const initialWalk = before && before.kind === "walk" && before.parent && before.parent.kind === "origin"
+      ? { from: before.from, to: before.to, min: before.walk } : null;
+    const legs = rides.map(l => ({
+      routeId: l.pattern.routeId, tripId: l.trip.tripId,
+      fromStop: l.pattern.stops[l.boardIdx], toStop: l.pattern.stops[l.alightIdx],
+      depTime: l.trip.depText[l.boardIdx], arrTime: l.trip.arrText[l.alightIdx], dayType: l.trip.dayType,
+    }));
+    const transfers = [];
+    for (let i = 0; i < rides.length - 1; i++) {
+      const walkMin = legs[i].toStop === legs[i + 1].fromStop ? 0
+        : Math.max(2, Math.round((() => {
+          const a = state.stops[legs[i].toStop], b = state.stops[legs[i + 1].fromStop];
+          return a && b ? haversineMeters(a.lat, a.lon, b.lat, b.lon) : 0;
+        })() / 70));
+      transfers.push({ walkMin, waitMin: timeToMinutes(legs[i + 1].depTime) - timeToMinutes(legs[i].arrTime) });
+    }
+    const dep = timeToMinutes(legs[0].depTime) - (initialWalk ? initialWalk.min + 1 : 0);
+    const arr = timeToMinutes(legs[legs.length - 1].arrTime) + (finalWalk ? finalWalk.min : 0);
+    const clock = m => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}:00`;
+    const arrText = clock(arr), depText = clock(dep);
+    return {
+      type: legs.length === 1 ? "diretto" : "cambio", duration: arr - dep, depMin: dep, legs, transfers, finalWalk,
+      initialWalk, arrText, depText,
+      waitMinutes: transfers[0] ? transfers[0].waitMin : 0, walkMinutes: transfers[0] ? transfers[0].walkMin : 0,
+    };
+  }
+
+  async function multiLegSearch(originCluster, destCluster) {
+    await ensureTimetablesLoaded(state.routes.map(r => r.id));
+    const classes = plannerState.dayFilter === "__any__" ? ["feriale", "sabato", "festivo"] : [plannerState.dayFilter];
+    const options = [];
+    classes.forEach(cls => {
+      const day = patternsForDay(cls);
+      // every departure time from the origin is a starting point
+      const starts = new Set();
+      originCluster.forEach(sid => (day.at.get(sid) || []).forEach(({ p, i }) => {
+        if (i < p.stops.length - 1) p.trips.forEach(t => starts.add(t.dep[i]));
+      }));
+      let times = Array.from(starts).sort((a, b) => a - b);
+      if (times.length > 150) times = times.filter((_, i) => i % Math.ceil(times.length / 150) === 0);
+      times.forEach(startMin => {
+        raptorFrom(day, startMin, originCluster, destCluster).forEach(label => {
+          const opt = journeyFromLabel(label);
+          if ((opt.legs.length > 1 || opt.finalWalk || opt.initialWalk) && opt.legs.every((l, i) => i === 0 || l.tripId !== opt.legs[i - 1].tripId)) {
+            opt.multi = true;
+            opt.dayClass = cls;
+            options.push(opt);
+          }
+        });
+      });
+    });
+    return options;
   }
 
   function renderPlannerResults(options, totalCount) {
@@ -1082,18 +1310,21 @@
       </div>`;
 
     const rowsHtml = options.map((opt, idx) => {
-      const dep = opt.legs[0].depTime;
-      const arr = opt.legs[opt.legs.length - 1].arrTime;
+      const dep = opt.depText || opt.legs[0].depTime;
+      const arr = opt.arrText || opt.legs[opt.legs.length - 1].arrTime;
       const legsChips = opt.legs.map(l => {
         const r = routeOfSafe(l.routeId);
         return `<span class="journey-leg-chip" style="background:${r.color}">${r.short_name}</span>`;
       }).join("<span style='color:#999;font-size:0.7rem;'>&rarr;</span>");
-      let changesLabel = "Diretto";
-      if (opt.legs.length > 1) {
+      let changesLabel = opt.finalWalk || opt.initialWalk ? "Diretto, con tratto a piedi" : "Diretto";
+      if (opt.legs.length === 2) {
         const alight = opt.legs[0].toStop, board = opt.legs[1].fromStop;
         changesLabel = alight === board
           ? `Cambio a ${stopDisplayName(alight)}`
           : `Cambio a piedi: ${stopDisplayName(alight)} &rarr; ${stopDisplayName(board)}`;
+      } else if (opt.legs.length > 2) {
+        const places = opt.legs.slice(0, -1).map(l => stopDisplayName(l.toStop));
+        changesLabel = `${opt.legs.length - 1} cambi: ${places.join(", ")}`;
       }
       return `
         <div class="journey-result">
@@ -1106,13 +1337,15 @@
             <div class="journey-changes" style="margin-top:2px;">${opt.dayLabel}</div>
           </div>
           <div class="journey-detail" id="journey-detail-${idx}">
+            ${opt.initialWalk ? `<div class="journey-wait">A piedi da ${stopDisplayName(opt.initialWalk.from)} a ${stopDisplayName(opt.initialWalk.to)} (~${opt.initialWalk.min} min)</div>` : ""}
             ${opt.legs.map((l, i) => `
               <div class="journey-leg-block" style="border-color:${routeOfSafe(l.routeId).color}">
                 <div class="journey-leg-title">${modeIcon(routeOfSafe(l.routeId).mode)}${routeOfSafe(l.routeId).short_name} &middot; ${routeOfSafe(l.routeId).long_name}</div>
                 <div>${stopDisplayName(l.fromStop)} (${fmtTime(l.depTime)}) &rarr; ${stopDisplayName(l.toStop)} (${fmtTime(l.arrTime)})</div>
               </div>
-              ${i < opt.legs.length - 1 ? renderWaitNote(opt, l) : ""}
+              ${i < opt.legs.length - 1 ? renderWaitNote(opt, i) : ""}
             `).join("")}
+            ${opt.finalWalk ? `<div class="journey-wait">Poi a piedi da ${stopDisplayName(opt.finalWalk.from)} a ${stopDisplayName(opt.finalWalk.to)} (~${opt.finalWalk.min} min)</div>` : ""}
           </div>
         </div>`;
     }).join("");
@@ -1145,16 +1378,18 @@
     return ids;
   }
 
-  function renderWaitNote(opt, alightLeg) {
-    const board = opt.legs[1].fromStop;
-    if (alightLeg.toStop !== board) {
-      const a = state.stops[alightLeg.toStop], b = state.stops[board];
+  // Note between leg i and leg i + 1: the wait, or the short walk between two stops.
+  function renderWaitNote(opt, i) {
+    const alightStop = opt.legs[i].toStop, board = opt.legs[i + 1].fromStop;
+    const wait = timeToMinutes(opt.legs[i + 1].depTime) - timeToMinutes(opt.legs[i].arrTime);
+    if (alightStop !== board) {
+      const a = state.stops[alightStop], b = state.stops[board];
       const distM = (a && b) ? Math.round(haversineMeters(a.lat, a.lon, b.lat, b.lon)) : null;
       const walkMin = distM != null ? Math.max(2, Math.round(distM / 70)) : Math.max(2, opt.walkMinutes || 3);
-      const waitAfterWalk = Math.max(0, opt.waitMinutes - walkMin);
-      return `<div class="journey-wait">A piedi da ${stopDisplayName(alightLeg.toStop)} a ${stopDisplayName(board)} (~${walkMin} min${distM != null ? ", " + distM + " m" : ""}), poi attesa di circa ${waitAfterWalk} min</div>`;
+      const waitAfterWalk = Math.max(0, wait - walkMin);
+      return `<div class="journey-wait">A piedi da ${stopDisplayName(alightStop)} a ${stopDisplayName(board)} (~${walkMin} min${distM != null ? ", " + distM + " m" : ""}), poi attesa di circa ${waitAfterWalk} min</div>`;
     }
-    return `<div class="journey-wait">Cambio: attesa di circa ${opt.waitMinutes} min a ${stopDisplayName(alightLeg.toStop)}</div>`;
+    return `<div class="journey-wait">Cambio: attesa di circa ${wait} min a ${stopDisplayName(alightStop)}</div>`;
   }
 
   function routeOfSafe(rid) {
