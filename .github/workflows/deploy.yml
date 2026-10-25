@@ -36,7 +36,7 @@ jobs:
       - name: Prepara il sito
         run: |
           mkdir _site
-          cp -r index.html css js img fonts data _site/
+          cp -r index.html privacy.html robots.txt sitemap.xml css js img fonts data _site/
 
       - uses: actions/configure-pages@v5
 

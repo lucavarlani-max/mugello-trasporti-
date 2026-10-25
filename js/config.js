@@ -13,6 +13,9 @@ window.MUGELLO_CONFIG = {
   // Settings "Allow adding visitor counts on your website" e scrivi qui il codice scelto
   // (la parte prima di .goatcounter.com). Se vuoto, il contatore non compare.
   goatcounterCode: "mugellotrasporti",
+  // Google Analytics 4 con banner cookie (alternativa al tag fisso). Ora Analytics e' caricato dal tag fisso in
+  // index.html: lasciare vuoto, altrimenti verrebbe caricato due volte.
+  ga4Id: "",
   // Identificazione verso BusOne, la fonte dei ritardi dei treni. Formato suggerito:
   // "organizzazione; nome app; contatto". Se vuoto, non viene inviata alcuna intestazione:
   // il servizio risponde ugualmente ma ha annunciato che smetterà di accettare richieste anonime.

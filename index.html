@@ -3,6 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-67X67CSFPL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-67X67CSFPL');
+</script>
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
@@ -11,8 +20,8 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Mugellotrasporti">
 <meta property="og:locale" content="it_IT">
-<meta property="og:title" content="Mugellotrasporti — Treni e autobus del Mugello">
-<meta property="og:description" content="Mappa interattiva, orari e percorsi di treni e autobus per Mugello, Alto Mugello e Val di Sieve, anche da e per Firenze e Faenza. Ritardi dei treni in tempo reale.">
+<meta property="og:title" content="Mugellotrasporti — Orari bus e treni del Mugello">
+<meta property="og:description" content="Mappa, orari e percorsi di bus e treni nel Mugello, Alto Mugello e Val di Sieve, da e per Firenze e Faenza. Ritardi dei treni in tempo reale.">
 <meta property="og:url" content="https://www.mugellotrasporti.it/">
 <meta property="og:image" content="https://www.mugellotrasporti.it/img/og-mugellotrasporti.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -20,23 +29,67 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Mugellotrasporti: treni e autobus del Mugello, Alto Mugello e Val di Sieve">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mugellotrasporti — Treni e autobus del Mugello">
+<meta name="twitter:title" content="Mugellotrasporti — Orari bus e treni del Mugello">
 <meta name="twitter:description" content="Mappa interattiva, orari e percorsi di treni e autobus per Mugello, Alto Mugello e Val di Sieve. Ritardi dei treni in tempo reale.">
 <meta name="twitter:image" content="https://www.mugellotrasporti.it/img/og-mugellotrasporti.jpg">
 <meta name="theme-color" content="#1b2a3c">
 <meta name="author" content="Luca Varlani">
 <meta name="copyright" content="© 2026 Luca Varlani. Tutti i diritti riservati.">
-<title>Mugellotrasporti — Treni e Autobus del Mugello, Alto Mugello e Val di Sieve</title>
-<meta name="description" content="Mappa interattiva e orari di treni e autobus per Mugello, Alto Mugello e Val di Sieve: collegamenti locali e con Firenze e Faenza.">
+<title>Orari bus e treni Mugello e Val di Sieve | Mugellotrasporti</title>
+<meta name="description" content="Mappa, orari e percorsi di bus e treni nel Mugello, Alto Mugello e Val di Sieve, da e per Firenze e Faenza. Ritardi dei treni in tempo reale.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://www.mugellotrasporti.it/#website",
+      "url": "https://www.mugellotrasporti.it/",
+      "name": "Mugellotrasporti",
+      "inLanguage": "it-IT",
+      "description": "Mappa, orari e percorsi di bus e treni nel Mugello, Alto Mugello e Val di Sieve.",
+      "publisher": { "@type": "Person", "name": "Luca Varlani" }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://www.mugellotrasporti.it/#app",
+      "name": "Mugellotrasporti",
+      "url": "https://www.mugellotrasporti.it/",
+      "applicationCategory": "TravelApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Richiede JavaScript",
+      "inLanguage": "it-IT",
+      "isAccessibleForFree": true,
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+      "author": { "@type": "Person", "name": "Luca Varlani" },
+      "description": "Mappa interattiva con orari, percorsi e pianificatore di viaggio di bus e treni nel Mugello, Alto Mugello e Val di Sieve, anche da e per Firenze e Faenza, con i ritardi dei treni in tempo reale.",
+      "areaServed": [
+        { "@type": "AdministrativeArea", "name": "Mugello" },
+        { "@type": "AdministrativeArea", "name": "Alto Mugello" },
+        { "@type": "AdministrativeArea", "name": "Val di Sieve" }
+      ]
+    }
+  ]
+}
+</script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<noscript>
+  <div class="noscript">
+    <h2>Mugellotrasporti: orari di bus e treni del Mugello</h2>
+    <p>Per usare la mappa interattiva e il pianificatore di viaggio serve JavaScript. Mugellotrasporti raccoglie gli orari di bus e treni
+      del Mugello, dell'Alto Mugello e della Val di Sieve, anche da e per Firenze e Faenza.</p>
+    <p>Per gli orari ufficiali: <a href="https://www.trenitalia.com/">Trenitalia</a> e <a href="https://www.at-bus.it/">Autolinee Toscane</a>.</p>
+  </div>
+</noscript>
 
 <header id="topbar">
-  <a class="brand" href="./" aria-label="Mugellotrasporti, vai all'inizio">
+  <h1 class="brand-h1"><a class="brand" href="./" aria-label="Mugellotrasporti: orari bus e treni del Mugello">
     <span class="brand-mark"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true">
       <path d="M2 16 L10 7 L17 13 L26 4 L38 16" stroke="#3ba883" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
       <path d="M5 34 C11 26 15 36 21 30.5 C27 25 31 32 35 26" stroke="#67aef0" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -45,7 +98,7 @@
       <circle cx="35.5" cy="25.5" r="3.2" fill="#e0975a" stroke="#1b2a3c" stroke-width="1.4"/>
     </svg></span>
     <span>Mugello<span class="brand-sky">trasporti</span><small>Bus &middot; treni &middot; orari della vallata</small></span>
-  </a>
+  </a></h1>
   <div class="search-wrap">
     <input id="search-input" type="text" placeholder="Cerca una fermata o un comune (es. Vicchio, Marradi, Pontassieve...)" autocomplete="off">
     <div id="search-results" class="search-results hidden"></div>
@@ -81,6 +134,15 @@
   <div id="footer-details" class="footer-details" role="region" aria-label="Fonti e note">
     <div class="footer-grid">
       <section>
+        <h3>Il servizio</h3>
+        <p><b>Mugellotrasporti</b> riunisce in una mappa gli orari e i percorsi di <b>bus e treni del Mugello, dell'Alto Mugello e della Val di Sieve</b>,
+          anche per Firenze e Faenza: Barberino di Mugello, Scarperia e San Piero, Borgo San Lorenzo, Vicchio, Dicomano, Londa, San Godenzo,
+          Rufina, Pontassieve, Vaglia, Firenzuola e Marradi.</p>
+        <p>Ci sono le linee ferroviarie Faentina (Firenze, Borgo San Lorenzo, Marradi, Faenza) e Firenze-Pontassieve-Borgo San Lorenzo,
+          e le linee autobus Autolinee Toscane 301, 302, 303, 304, 305, 307, 319, 322, 325, 330, 331, 333, 336, 338, 343, 345 e il sostitutivo 900.
+          Puoi pianificare un viaggio da una fermata all'altra, vedere le corse presso le scuole e controllare i ritardi dei treni in tempo reale.</p>
+      </section>
+      <section>
         <h3>Fonti dei dati</h3>
         <ul>
           <li><b>Orari e percorsi:</b> Regione Toscana, Open Data TPL (CC-BY): feed di Trenitalia e Autolinee Toscane.</li>
@@ -106,6 +168,7 @@
   <div class="footer-bar">
     <span class="footer-copy">&copy; 2026 Luca Varlani<span class="hide-sm"> &middot; Tutti i diritti riservati</span></span>
     <span id="visit-counter" class="visit-counter hidden"></span>
+    <a class="footer-link" href="privacy.html">Privacy</a>
     <button id="footer-toggle" class="footer-toggle" type="button" aria-expanded="false" aria-controls="footer-details">Fonti e note</button>
   </div>
 </footer>
@@ -118,5 +181,6 @@
 <script src="js/delays.js"></script>
 <script src="js/meteo.js"></script>
 <script src="js/counter.js"></script>
+<script src="js/analytics.js"></script>
 </body>
 </html>
