@@ -1,0 +1,170 @@
+{
+ "_nota": "Fermate ColBus assenti da OpenStreetMap: posizione presa dalla fermata Autolinee Toscane omonima o dalla localita'",
+ "places": {
+  "barberino centro cavour": [
+   43.999423,
+   11.238798,
+   "fermata Autolinee Toscane BARBERINO Piazza Cavour"
+  ],
+  "barberino centro vittorio": [
+   43.99862,
+   11.241505,
+   "fermata Autolinee Toscane BARBERINO Via di Vittorio"
+  ],
+  "passo della futa": [
+   44.09337,
+   11.278195,
+   "fermata Autolinee Toscane PASSO DELLA FUTA"
+  ],
+  "monte di fo": [
+   44.077522,
+   11.28143,
+   "fermata Autolinee Toscane MONTE DI FO"
+  ],
+  "cavallina": [
+   43.984538,
+   11.233252,
+   "fermata Autolinee Toscane CAVALLINA"
+  ],
+  "pratolino": [
+   43.861457,
+   11.299027,
+   "fermata Autolinee Toscane PRATOLINO"
+  ],
+  "pratolino 2": [
+   43.861457,
+   11.299027,
+   "fermata Autolinee Toscane PRATOLINO"
+  ],
+  "pratolino ataf (p.za gerini)": [
+   43.861173,
+   11.29807,
+   "fermata Autolinee Toscane PRATOLINO"
+  ],
+  "santa lucia": [
+   44.07252,
+   11.27044,
+   "OpenStreetMap, Santa Lucia (approssimata)"
+  ],
+  "montecarelli": [
+   44.04825,
+   11.26117,
+   "OpenStreetMap, Montecarelli (approssimata)"
+  ],
+  "le maschere": [
+   43.99513,
+   11.26861,
+   "OpenStreetMap, Le Maschere (approssimata)"
+  ],
+  "colle barucci": [
+   43.98611,
+   11.27436,
+   "OpenStreetMap, Colle Barucci (approssimata)"
+  ],
+  "barberino via repubblica": [
+   44.00329,
+   11.2385,
+   "OpenStreetMap, Via della Repubblica (approssimata)"
+  ],
+  "scuola mazzini": [
+   44.00455,
+   11.23889,
+   "OpenStreetMap, Scuola Mazzini (approssimata)"
+  ],
+  "bivigliano piazza castelli": [
+   43.89524,
+   11.32194,
+   "OpenStreetMap, centro di Bivigliano (approssimata)"
+  ],
+  "albergo demidoff": [
+   43.86226,
+   11.30163,
+   "OpenStreetMap, Piazza Demidoff (approssimata)"
+  ],
+  "viliani centro": [
+   43.88534,
+   11.32005,
+   "OpenStreetMap, Viliani (approssimata)"
+  ],
+  "poggio chiarese": [
+   43.89861,
+   11.31836,
+   "OpenStreetMap, Poggio Chiarese (approssimata)"
+  ],
+  "caselline": [
+   43.87651,
+   11.32108,
+   "OpenStreetMap, Caselline (approssimata)"
+  ],
+  "via della fittaccia": [
+   43.89595,
+   11.32416,
+   "OpenStreetMap, Via della Fittaccia (approssimata)"
+  ],
+  "bivigliano fittaccia 3": [
+   43.89595,
+   11.32416,
+   "OpenStreetMap, Via della Fittaccia (approssimata)"
+  ],
+  "bottin rosso": [
+   43.89276,
+   11.33042,
+   "OpenStreetMap, Bottinrosso (approssimata)"
+  ],
+  "pensione montesenario": [
+   43.895,
+   11.33325,
+   "OpenStreetMap, Montesenario (approssimata)"
+  ],
+  "convento montesenario": [
+   43.895,
+   11.33325,
+   "OpenStreetMap, Montesenario (approssimata)"
+  ],
+  "fontebuona": [
+   43.8753,
+   11.2916,
+   "OpenStreetMap, Fontebuona (approssimata)"
+  ],
+  "fontebuona fs": [
+   43.8753,
+   11.2916,
+   "OpenStreetMap, Fontebuona (approssimata)"
+  ],
+  "mattio": [
+   43.91181,
+   11.28027,
+   "OpenStreetMap, Via Mattio (approssimata)"
+  ],
+  "mattio locanda": [
+   43.91181,
+   11.28027,
+   "OpenStreetMap, Via Mattio (approssimata)"
+  ],
+  "vaglia pensilina": [
+   43.8986,
+   11.28351,
+   "OpenStreetMap, Via Bolognese, Vaglia (approssimata)"
+  ],
+  "vaglia scuole": [
+   43.90748,
+   11.28157,
+   "OpenStreetMap, scuola elementare di Vaglia (approssimata)"
+  ],
+  "pratolino piovano arlotto": [
+   43.86349,
+   11.30102,
+   "OpenStreetMap, Via Piovano Arlotto (approssimata)"
+  ],
+  "casola valsenio": [
+   44.22319,
+   11.62311,
+   "OpenStreetMap, Casola Valsenio (approssimata)"
+  ],
+  "val di noce sorgente": [
+   44.04432,
+   11.66864,
+   "OpenStreetMap, Val di Noce Sorgente"
+  ]
+ }
+}

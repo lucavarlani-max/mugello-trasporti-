@@ -384,6 +384,18 @@ def main():
     log("bus feed")
     b_routes, b_stops, b_window = extract(bus_dir, select_bus_routes(bus_dir), "B-", 350, False)
 
+    log("ColBus lines")
+    colbus_lines = 0
+    try:   # a problem with the operator's site must never stop the whole update
+        sys.path.insert(0, here)
+        import colbus
+        cb_routes, cb_stops = colbus.build_routes(project_on_polyline, feed_routes=b_routes, feed_stops=b_stops)
+        b_routes += cb_routes
+        b_stops.update(cb_stops)
+        colbus_lines = len(cb_routes)
+    except Exception as e:
+        log("  WARNING: ColBus lines skipped:", repr(e))
+
     out = os.path.abspath(args.out)
     tt_dir = os.path.join(out, "timetables")
     os.makedirs(tt_dir, exist_ok=True)
@@ -414,6 +426,7 @@ def main():
         "generated": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "bus": [iso(b_window[0]), iso(b_window[1])] if b_window else None,
         "train": [iso(t_window[0]), iso(t_window[1])] if t_window else None,
+        "colbus": datetime.date.today().isoformat() if colbus_lines else None,
     })
     log(f"done: {len(index)} routes, {len(stops)} stops, {len(schools)} schools -> {out}")
     log(f"bus timetable window: {b_window}, train: {t_window}")

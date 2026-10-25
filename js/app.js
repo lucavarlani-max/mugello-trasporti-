@@ -299,6 +299,7 @@
       });
       Object.keys(groups).sort((a, b) => {
         const na = parseInt(a, 10), nb = parseInt(b, 10);
+        if (isNaN(na) || isNaN(nb)) return isNaN(na) - isNaN(nb) || a.localeCompare(b);
         return na - nb;
       }).forEach(lg => {
         linesListEl.appendChild(renderGroupedLineCard(lg, groups[lg]));
@@ -330,9 +331,9 @@
     const header = document.createElement("div");
     header.className = "line-group-header";
     header.innerHTML = `
-      <span class="line-chip" style="background:${first.color}">${lineGroup}</span>
+      <span class="line-chip" style="background:${first.color}">${first.chip || lineGroup}</span>
       <div>
-        <div class="line-group-title">Linea ${lineGroup}</div>
+        <div class="line-group-title">${first.title || "Linea " + lineGroup}</div>
         <div class="line-group-sub">${first.long_name}</div>
       </div>`;
     const variantsWrap = document.createElement("div");
@@ -340,7 +341,7 @@
     variants.sort((a, b) => (a.variant || "").localeCompare(b.variant || "")).forEach(v => {
       const btn = document.createElement("button");
       btn.className = "variant-btn";
-      btn.textContent = `Corsa ${v.variant} — ${v.n_trips} corse programmate`;
+      btn.textContent = v.variant ? `Corsa ${v.variant} — ${v.n_trips} corse programmate` : `${v.n_trips} corse programmate`;
       btn.dataset.routeId = v.id;
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -660,10 +661,7 @@
     if (label.includes("Feriale")) [0, 1, 2, 3, 4].forEach(d => days.add(d));
     if (label.includes("Sabato")) days.add(5);
     if (label.includes("Domenica")) days.add(6);
-    label.split(/[+,]/).forEach(tok => {
-      const t = tok.trim();
-      if (Object.prototype.hasOwnProperty.call(WEEKDAY_ABBR, t)) days.add(WEEKDAY_ABBR[t]);
-    });
+    (label.match(/\b(?:Lun|Mar|Mer|Gio|Ven|Sab|Dom)\b/g) || []).forEach(tok => days.add(WEEKDAY_ABBR[tok]));
     return days;
   }
 

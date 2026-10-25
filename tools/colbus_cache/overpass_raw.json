@@ -1,0 +1,1823 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-25T18:33:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 771477755,
+  "lat": 44.0613220,
+  "lon": 11.6794232,
+  "tags": {
+    "highway": "bus_stop",
+    "name": "Val di Noce_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "route_ref": "312 C",
+    "shelter": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 2329814804,
+  "lat": 44.0731083,
+  "lon": 11.6888561,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Badia della Valle_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR026",
+    "route_ref": "312 C",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 3993514110,
+  "lat": 44.0409747,
+  "lon": 11.5482855,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Crespino del Lamone",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR049",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 3993514129,
+  "lat": 44.0360805,
+  "lon": 11.5457907,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Crespino del Lamone_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 6710095515,
+  "lat": 44.0592608,
+  "lon": 11.5563866,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "check_date:shelter": "2025-12-27",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Fantino_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR062",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098123,
+  "lat": 44.0770329,
+  "lon": 11.6132287,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Marradi Ufficio Turistico",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098124,
+  "lat": 44.0746420,
+  "lon": 11.6111983,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Marradi Ospedale_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR081",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098125,
+  "lat": 44.0745772,
+  "lon": 11.6110422,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Marradi Ospedale",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098126,
+  "lat": 44.0740543,
+  "lon": 11.6120619,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Marradi Scuole",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098127,
+  "lat": 44.0739772,
+  "lon": 11.6121129,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Marradi Scuole_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098128,
+  "lat": 44.0668613,
+  "lon": 11.6032455,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Biforco",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR08",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098129,
+  "lat": 44.0669634,
+  "lon": 11.6035271,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Biforco_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR02",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098130,
+  "lat": 44.0616946,
+  "lon": 11.5897252,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Camurano_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098131,
+  "lat": 44.0615587,
+  "lon": 11.5896320,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Camurano",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098133,
+  "lat": 44.0600189,
+  "lon": 11.5856033,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Poggiol di Termine_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098134,
+  "lat": 44.0601018,
+  "lon": 11.5856837,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Poggiol di Termine",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098135,
+  "lat": 44.0612612,
+  "lon": 11.5604120,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Fantino",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR051",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098136,
+  "lat": 44.0375443,
+  "lon": 11.5180049,
+  "tags": {
+    "bench": "no",
+    "bin": "yes",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Casaglia",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "BSL139",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951098137,
+  "lat": 44.0375066,
+  "lon": 11.5177662,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Casaglia_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951209883,
+  "lat": 44.0771563,
+  "lon": 11.6137897,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Marradi Teatro P",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951441625,
+  "lat": 44.0808409,
+  "lon": 11.7091976,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Lutirano_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951441626,
+  "lat": 44.0811026,
+  "lon": 11.7093098,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Lutirano",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951441627,
+  "lat": 44.0858863,
+  "lon": 11.7175404,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Veriolo_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605397,
+  "lat": 44.1569430,
+  "lon": 11.7925601,
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "yes",
+    "name": "Modigliana",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605398,
+  "lat": 44.1259620,
+  "lon": 11.7422352,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Santa Reparata",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR035",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605399,
+  "lat": 44.1074478,
+  "lon": 11.7264946,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Abeto",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR033",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605400,
+  "lat": 44.1074921,
+  "lon": 11.7264221,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Abeto_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605401,
+  "lat": 44.0914037,
+  "lon": 11.7179276,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Cignano_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR031",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605402,
+  "lat": 44.0914884,
+  "lon": 11.7182307,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Cignano",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605403,
+  "lat": 44.0858639,
+  "lon": 11.7176057,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Veriolo",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605404,
+  "lat": 44.0799961,
+  "lon": 11.6993318,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "fixme": "Verificare posizione",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Brilleta",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605405,
+  "lat": 44.0799132,
+  "lon": 11.6993721,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "fixme": "Verificare posizione",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Brilleta_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605407,
+  "lat": 44.0731680,
+  "lon": 11.6888162,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Badia della Valle",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7951605410,
+  "lat": 44.0613271,
+  "lon": 11.6793480,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Val di Noce",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952269561,
+  "lat": 44.2030301,
+  "lon": 11.7278205,
+  "tags": {
+    "bench": "yes",
+    "bin": "yes",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "yes",
+    "name": "Fognano Fs",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952269562,
+  "lat": 44.1471760,
+  "lon": 11.6880694,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "San Cassiano_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952269563,
+  "lat": 44.1472554,
+  "lon": 11.6883791,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "San Cassiano",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952269564,
+  "lat": 44.1370911,
+  "lon": 11.6834382,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Pedrosola",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952269565,
+  "lat": 44.1376933,
+  "lon": 11.6834127,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Pedrosola_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952269566,
+  "lat": 44.1156694,
+  "lon": 11.6770716,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Rugginara",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR037",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952277385,
+  "lat": 44.1120153,
+  "lon": 11.6714663,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Rugginara_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952277386,
+  "lat": 44.1012495,
+  "lon": 11.6549503,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Sant'Adriano",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR043",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952277387,
+  "lat": 44.0945426,
+  "lon": 11.6396799,
+  "tags": {
+    "bench": "yes",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "yes",
+    "name": "Popolano_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952277388,
+  "lat": 44.0945349,
+  "lon": 11.6393822,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Popolano",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952277393,
+  "lat": 44.0797580,
+  "lon": 11.6187037,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Marradi Stazione Fs",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952356112,
+  "lat": 44.1085928,
+  "lon": 11.6053788,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "fixme": "Verificare posizione",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Gamberaldi",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911792,
+  "lat": 44.0784220,
+  "lon": 11.6161469,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Materna Marradi_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911793,
+  "lat": 44.0779199,
+  "lon": 11.6143380,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Bivio Palazzuolo_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911794,
+  "lat": 44.0779162,
+  "lon": 11.6140096,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Bivio Palazzuolo",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911795,
+  "lat": 44.0833079,
+  "lon": 11.5890021,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Cignato Riolese_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911796,
+  "lat": 44.0833503,
+  "lon": 11.5886658,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Cignato Riolese",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911797,
+  "lat": 44.0851632,
+  "lon": 11.5882560,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Cignato",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911798,
+  "lat": 44.0848792,
+  "lon": 11.5893756,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "fixme": "Verificare posizione",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Cignato_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911799,
+  "lat": 44.0907580,
+  "lon": 11.5838482,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Palazzuolo 1",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911800,
+  "lat": 44.0907205,
+  "lon": 11.5836557,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Palazzuolo 1_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911801,
+  "lat": 44.0995315,
+  "lon": 11.5646337,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Ss 306 Ginestreto",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "PL2003",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911802,
+  "lat": 44.0993134,
+  "lon": 11.5645169,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Ss 306 Ginestreto_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911803,
+  "lat": 44.1133822,
+  "lon": 11.5476768,
+  "tags": {
+    "bench": "yes",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Palazzuolo sul Senio",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911804,
+  "lat": 44.1120641,
+  "lon": 11.5422342,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Quadalto 3",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "PLZ009",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911805,
+  "lat": 44.1120057,
+  "lon": 11.5423548,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "check_date:shelter": "2025-02-02",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Quadalto 3_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "PLZ011",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911806,
+  "lat": 44.1719586,
+  "lon": 11.5886869,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Mercatale Val Senio_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911807,
+  "lat": 44.1722026,
+  "lon": 11.5891708,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Mercatale Val Senio",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911808,
+  "lat": 44.1603323,
+  "lon": 11.5876134,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Misileo_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911809,
+  "lat": 44.1607145,
+  "lon": 11.5879670,
+  "tags": {
+    "bench": "yes",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Misileo",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "PLZ014",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911812,
+  "lat": 44.1554733,
+  "lon": 11.5846967,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Campoguglio_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911813,
+  "lat": 44.1556420,
+  "lon": 11.5849350,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Campoguglio",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "PLZ015",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911814,
+  "lat": 44.1170978,
+  "lon": 11.5518520,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Sp306 Km 36+III",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911815,
+  "lat": 44.1164793,
+  "lon": 11.5516203,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Sp306 Di Fronte Nc.19",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "PL2020",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911816,
+  "lat": 44.1355848,
+  "lon": 11.5578971,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "La Croce",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911817,
+  "lat": 44.1350677,
+  "lon": 11.5582207,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "La Croce_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911818,
+  "lat": 44.1424324,
+  "lon": 11.5751716,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "I Pedroni_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952911819,
+  "lat": 44.1425878,
+  "lon": 11.5754581,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "I Pedroni",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "PLZ013",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954601,
+  "lat": 43.9543652,
+  "lon": 11.3880841,
+  "tags": {
+    "bench": "no",
+    "bin": "yes",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Borgo San Lorenzo Piazza del Poggio",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954602,
+  "lat": 43.9822293,
+  "lon": 11.4069426,
+  "tags": {
+    "bench": "yes",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "yes",
+    "name": "Panicaglia Centro_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "yes",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954603,
+  "lat": 43.9822571,
+  "lon": 11.4068200,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Panicaglia Centro",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954604,
+  "lat": 44.0098676,
+  "lon": 11.4365624,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Ronta_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954605,
+  "lat": 44.0103205,
+  "lon": 11.4369543,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Ronta",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954606,
+  "lat": 44.0144884,
+  "lon": 11.4431135,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Madonna dei Tre Fiumi",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954607,
+  "lat": 44.0145834,
+  "lon": 11.4436552,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Madonna dei Tre Fiumi_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954608,
+  "lat": 44.0316177,
+  "lon": 11.4684281,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Razzuolo_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7952954609,
+  "lat": 44.0316493,
+  "lon": 11.4683319,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "name": "Razzuolo",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941060,
+  "lat": 44.0078078,
+  "lon": 11.4349118,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941061,
+  "lat": 44.0119367,
+  "lon": 11.4385528,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941062,
+  "lat": 44.0122911,
+  "lon": 11.4395590,
+  "tags": {
+    "bench": "yes",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941063,
+  "lat": 44.0235633,
+  "lon": 11.4544276,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941064,
+  "lat": 44.0238393,
+  "lon": 11.4549604,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941065,
+  "lat": 44.0310524,
+  "lon": 11.4661999,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941066,
+  "lat": 44.0311006,
+  "lon": 11.4666614,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941067,
+  "lat": 44.0385859,
+  "lon": 11.4836921,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9918941068,
+  "lat": 44.0386977,
+  "lon": 11.4837336,
+  "tags": {
+    "bench": "no",
+    "bin": "no",
+    "bus": "yes",
+    "departures_board": "yes",
+    "highway": "bus_stop",
+    "lit": "no",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "shelter": "no",
+    "surface": "asphalt",
+    "tactile_paving": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 12788116484,
+  "lat": 44.1043760,
+  "lon": 11.7051552,
+  "tags": {
+    "bus": "yes",
+    "highway": "bus_stop",
+    "name": "Sessana_V",
+    "operator": "ColBus",
+    "public_transport": "platform",
+    "ref": "MRR019"
+  }
+}
+
+  ]
+}
